@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ohio Clean Cans - Schedule Lookup</title>
+<title>Ohio Clean Cans - Find My Service Day</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -241,14 +241,14 @@ input[type="text"]:focus {
   <div class="logo-hex">&#x267B;</div>
   <div>
     <div class="brand-name">OHIO CLEAN CANS</div>
-    <div class="brand-sub">MANAGEMENT SYSTEM</div>
+    <div class="brand-sub">CAN CLEANING SERVICE</div>
   </div>
 </div>
 
 <div class="card">
   <div class="card-header">
-    <h1>When's My Next Pickup?</h1>
-    <p>Enter your address or ZIP code to find your next service date</p>
+    <h1>Find My Service Day</h1>
+    <p>Enter your street address or ZIP code to see when we clean your area</p>
   </div>
   <div class="card-body">
     <label for="addrInput">Your Address or ZIP Code</label>
@@ -268,6 +268,10 @@ input[type="text"]:focus {
 
     <div class="result" id="resultBox">
       <div class="result-next" id="resultNext"></div>
+      <div class="cta-box" id="ctaBox" style="display:none; margin-top:16px; padding:16px 18px; background:#e8f0fe; border:2px solid #0056DF; border-radius:12px; text-align:center;">
+        <p style="font-size:13px; color:#0a2e7a; font-weight:600; margin-bottom:10px;">Ready to get your cans cleaned on this day?</p>
+        <a href="https://ohiocleancans.com/order" style="display:inline-block; padding:10px 24px; background:#0056DF; color:#fff; border-radius:8px; font-weight:900; text-decoration:none; font-family:Montserrat,sans-serif; font-size:13px;">Schedule My Service &#x2192;</a>
+      </div>
       <div class="sched-list" id="schedList"></div>
     </div>
   </div>
@@ -1410,7 +1414,7 @@ function renderResult(zip, label, hood, slots, day) {
   const resultNext = document.getElementById('resultNext');
   resultNext.innerHTML = `
     <div class="hood-line">${locLine} &middot; ${zip}</div>
-    <div style="font-size:13px;color:#065f46;font-weight:600;margin-bottom:2px;">Next ${day} Pickup</div>
+    <div style="font-size:13px;color:#065f46;font-weight:600;margin-bottom:2px;">We service your area on ${day}s</div>
     <div class="date-big">${fmtDate(next.date)}</div>
     <div class="days-away">${diff === 0 ? '&#x2705; Today!' : diff === 1 ? '&#x1F4C5; Tomorrow' : '&#x1F4C5; ' + fmtDaysAway(next.date)}</div>
     ${recycleBadge}
@@ -1438,6 +1442,7 @@ function renderResult(zip, label, hood, slots, day) {
   }
 
   document.getElementById('resultBox').classList.add('show');
+  document.getElementById('ctaBox').style.display = 'block';
 }
 
 function onKey(e) {
@@ -1474,7 +1479,7 @@ function showError(msg) {
   eb.classList.add('show');
 }
 function hideError() { document.getElementById('errorBox').classList.remove('show'); }
-function hideResult() { document.getElementById('resultBox').classList.remove('show'); }
+function hideResult() { document.getElementById('resultBox').classList.remove('show'); document.getElementById('ctaBox').style.display = 'none'; }
 function hideDayPicker() { document.getElementById('dayPicker').style.display = 'none'; }
 </script>
 </body>
