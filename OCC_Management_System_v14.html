@@ -1014,6 +1014,7 @@
         <option value="financials" class="admin-only">&#128181; Financials</option>
         <option value="customers" class="admin-only">&#128101; Customers</option>
         <option value="lookup">&#128269; Schedule Lookup</option>
+        <option value="newcustomer">&#128100; New Customer</option>
         <option value="calendar" class="admin-only">&#128197; Calendar</option>
         <option value="operations" class="admin-only">&#9881;&#65039; Operations</option>
         <option value="profit" class="admin-only">&#128200; Analytics</option>
@@ -1024,6 +1025,9 @@
     <div class="sidebar-section">Daily Ops</div>
     <button class="tab-btn" onclick="switchTab('lookup', this)">
       <span class="nav-icon">&#128269;</span> Schedule Lookup
+    </button>
+    <button class="tab-btn" onclick="switchTab('newcustomer', this)">
+      <span class="nav-icon">&#128100;</span> New Customer
     </button>
     <button class="tab-btn admin-only" onclick="switchTab('calendar', this)">
       <span class="nav-icon">&#128197;</span> Calendar
@@ -2825,6 +2829,144 @@
     </div>
   </div>
 </div><!-- end tab-prepaid -->
+
+  <!-- ══════════ TAB: NEW CUSTOMER ROUTE ASSIGNMENT ══════════ -->
+  <div class="tab-panel" id="tab-newcustomer">
+    <div class="tab-close-bar"><button class="tab-close-btn" onclick="closeTab()">&#10005; Close tab</button></div>
+    <div class="page-title">New Customer &mdash; Route Assignment</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+      <!-- LEFT: Intake Form -->
+      <div class="card" style="border-top:4px solid var(--green);">
+        <div class="card-head" style="background:var(--green);color:#fff;">&#128100; Customer Information</div>
+        <div class="card-body" style="padding:20px;">
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">First Name *</label>
+              <input type="text" id="ncFirstName" placeholder="Jane" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Last Name *</label>
+              <input type="text" id="ncLastName" placeholder="Smith" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Street Address *</label>
+            <input type="text" id="ncAddress" placeholder="123 Main St" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" oninput="ncAutoDetect()" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">City</label>
+              <input type="text" id="ncCity" placeholder="Cincinnati" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:#f9fafb;" readonly>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">ZIP Code *</label>
+              <input type="text" id="ncZip" placeholder="45209" maxlength="5" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" oninput="this.value=this.value.replace(/\D/g,''); ncAutoDetect();" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">State</label>
+              <input type="text" id="ncState" value="OH" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:#f9fafb;" readonly>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Phone</label>
+              <input type="tel" id="ncPhone" placeholder="(513) 555-0123" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Email</label>
+              <input type="email" id="ncEmail" placeholder="jane@email.com" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Number of Cans *</label>
+              <select id="ncCans" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:#fff;" onchange="ncUpdatePricing()">
+                <option value="">Select...</option>
+                <option value="2" selected>2 cans</option>
+                <option value="3">3 cans</option>
+                <option value="4">4 cans</option>
+                <option value="5">5 cans</option>
+                <option value="6">6 cans</option>
+                <option value="7">7 cans</option>
+                <option value="8">8 cans</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Service Plan *</label>
+              <select id="ncPlan" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;background:#fff;" onchange="ncUpdatePricing()">
+                <option value="">Select plan...</option>
+                <option value="BW">Bi-Weekly (26×/yr)</option>
+                <option value="M" selected>Monthly (12×/yr)</option>
+                <option value="S8">Seasonal 8 (8×/yr)</option>
+                <option value="BM">Bi-Monthly (6×/yr)</option>
+                <option value="WM">Warm Months (6×/yr)</option>
+                <option value="S6">Seasonal 6 (6×/yr)</option>
+                <option value="Q">Quarterly (4×/yr)</option>
+                <option value="S4">Summer 4 (4×/yr)</option>
+                <option value="S3">Summer 3 (3×/yr)</option>
+                <option value="P3">Pick 3×/yr (3×/yr)</option>
+                <option value="A1">Annual 1×/yr</option>
+                <option value="AP">Annual Prepaid (13×/yr ★)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="font-size:11px;font-weight:700;color:#374151;display:block;margin-bottom:4px;">Notes</label>
+            <textarea id="ncNotes" placeholder="Gate code, special instructions, referral source..." rows="2" style="width:100%;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-size:13px;outline:none;resize:vertical;font-family:inherit;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+          </div>
+
+          <div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#92400e;">
+            <strong>&#9888;&#65039; Policy:</strong> Minimum 2 cans at $30+/cleaning for new customers. Reject 1-can signups.
+          </div>
+
+          <button onclick="ncSubmit()" style="width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:0.3px;">
+            &#10004; Assign Route &amp; Save Customer
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Route Assignment Result -->
+      <div>
+        <!-- Auto-detected route info -->
+        <div class="card" style="border-top:4px solid var(--blue);">
+          <div class="card-head blue">&#128205; Route Assignment</div>
+          <div class="card-body" style="padding:20px;" id="ncRouteResult">
+            <div style="text-align:center;padding:30px 20px;color:#9ca3af;">
+              <div style="font-size:36px;margin-bottom:10px;">&#128269;</div>
+              <div style="font-size:13px;font-weight:600;">Enter a ZIP code to auto-detect the service route</div>
+              <div style="font-size:11px;margin-top:4px;color:#d1d5db;">The system will find matching routes, neighborhoods, and available service days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing preview -->
+        <div class="card" style="border-top:4px solid var(--orange);margin-top:16px;">
+          <div class="card-head" style="background:var(--orange);color:#fff;">&#128176; Pricing Preview</div>
+          <div class="card-body" style="padding:20px;" id="ncPricingPreview">
+            <div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Select cans &amp; plan to see pricing</div>
+          </div>
+        </div>
+
+        <!-- Saved customers list -->
+        <div class="card" style="border-top:4px solid #6b7280;margin-top:16px;">
+          <div class="card-head" style="background:#374151;color:#fff;">&#128203; Recently Added Customers <span id="ncSavedCount" style="background:rgba(255,255,255,0.2);padding:1px 8px;border-radius:10px;font-size:11px;margin-left:8px;">0</span></div>
+          <div class="card-body" style="padding:12px;max-height:300px;overflow-y:auto;" id="ncSavedList">
+            <div style="text-align:center;padding:16px;color:#9ca3af;font-size:12px;">No customers added yet</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- end tab-newcustomer -->
 
   </main>
 </div><!-- end .page -->
@@ -6905,6 +7047,365 @@ function pmRenderUpsellLine() {
   el.textContent = 'At '+Math.round(pmUpsellRate*100)+'% upsell: '+up+' of '+pros+' prospects upgrade to 2-can ($30), '+rem+' stay at 1-can ($25).';
 }
 
+// ══════════ NEW CUSTOMER ROUTE ASSIGNMENT ══════════
+
+const NC_STORAGE_KEY = 'occ_new_customers_v1';
+
+// Pricing matrix: plan code → { visits, prices: {cans: pricePerCleaning} }
+const NC_PLANS = {
+  BW:  { label:'Bi-Weekly',      visits:26, prices:{2:30,3:40,4:50,5:60,6:70,7:80,8:90} },
+  M:   { label:'Monthly',        visits:12, prices:{2:30,3:40,4:50,5:60,6:70,7:80,8:90} },
+  S8:  { label:'Seasonal 8',     visits:8,  prices:{2:35,3:45,4:55,5:65,6:75,7:85,8:96} },
+  BM:  { label:'Bi-Monthly',     visits:6,  prices:{2:35,3:48,4:60,5:72,6:84,7:96,8:108} },
+  WM:  { label:'Warm Months',    visits:6,  prices:{2:35,3:48,4:60,5:72,6:82,7:90,8:98} },
+  S6:  { label:'Seasonal 6',     visits:6,  prices:{2:35,3:48,4:60,5:72,6:82,7:90,8:98} },
+  Q:   { label:'Quarterly',      visits:4,  prices:{2:40,3:55,4:70,5:85,6:95,7:108,8:120} },
+  S4:  { label:'Summer 4',       visits:4,  prices:{2:50,3:60,4:70,5:80,6:90,7:100,8:110} },
+  S3:  { label:'Summer 3',       visits:3,  prices:{2:55,3:65,4:75,5:85,6:95,7:105,8:115} },
+  P3:  { label:'Pick 3×/yr',     visits:3,  prices:{2:55,3:65,4:75,5:85,6:95,7:105,8:115} },
+  A1:  { label:'Annual 1×/yr',   visits:1,  prices:{2:65,3:80,4:95,5:110,6:125,7:140,8:155} },
+  AP:  { label:'Annual Prepaid', visits:13, prices:{2:300,3:420,4:540,5:660,6:780,7:900,8:1080}, isAnnual:true }
+};
+
+function ncLoadCustomers() {
+  try { const s = localStorage.getItem(NC_STORAGE_KEY); if (s) return JSON.parse(s); } catch(e) {}
+  return [];
+}
+function ncSaveCustomers(arr) { localStorage.setItem(NC_STORAGE_KEY, JSON.stringify(arr)); }
+
+function ncAutoDetect() {
+  const zip = (document.getElementById('ncZip').value || '').trim();
+  const addr = (document.getElementById('ncAddress').value || '').trim();
+  const resultEl = document.getElementById('ncRouteResult');
+
+  // Auto-fill city from ZIP_INFO
+  const info = ZIP_INFO[zip] || {};
+  document.getElementById('ncCity').value = info.city || '';
+
+  if (!zip || zip.length !== 5) {
+    resultEl.innerHTML = '<div style="text-align:center;padding:30px 20px;color:#9ca3af;">' +
+      '<div style="font-size:36px;margin-bottom:10px;">&#128269;</div>' +
+      '<div style="font-size:13px;font-weight:600;">Enter a ZIP code to auto-detect the service route</div>' +
+      '<div style="font-size:11px;margin-top:4px;color:#d1d5db;">The system will find matching routes, neighborhoods, and available service days</div></div>';
+    return;
+  }
+
+  // Check if ZIP is in service area
+  const slots = SCHEDULE[zip];
+  if (!slots || !slots.length) {
+    resultEl.innerHTML = '<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:10px;padding:16px;text-align:center;">' +
+      '<div style="font-size:24px;margin-bottom:6px;">&#128683;</div>' +
+      '<div style="font-size:13px;font-weight:800;color:#dc2626;">ZIP ' + zip + ' is NOT in the service area</div>' +
+      '<div style="font-size:11px;color:#991b1b;margin-top:4px;">This ZIP code has no scheduled routes. Consider adding a custom route first.</div></div>';
+    return;
+  }
+
+  // Find matching neighborhoods by ZIP + street address
+  var matchedHoods = [];
+  var addrLower = addr.toLowerCase();
+  if (addr.length > 2) {
+    NEIGHBORHOODS.forEach(function(h) {
+      if (h.zip !== zip) return;
+      if (h.streets) {
+        h.streets.forEach(function(st) {
+          if (addrLower.indexOf(st.toLowerCase()) !== -1 || st.toLowerCase().indexOf(addrLower.split(' ').pop()) !== -1) {
+            matchedHoods.push(h);
+          }
+        });
+      }
+    });
+    // Deduplicate
+    var seen = {};
+    matchedHoods = matchedHoods.filter(function(h) {
+      var key = h.name + h.area;
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
+
+  // Also get all neighborhoods in this ZIP
+  var zipHoods = NEIGHBORHOODS.filter(function(h) { return h.zip === zip; });
+
+  // Determine route from neighborhood area fields
+  var routeMatch = null;
+  if (matchedHoods.length > 0) {
+    var areaStr = matchedHoods[0].area || '';
+    var rm = areaStr.match(/Route\s*(\d+)/i);
+    if (rm) routeMatch = 'Route ' + rm[1];
+  }
+
+  // Build service day summary
+  var dayMap = {};
+  slots.forEach(function(s) {
+    if (!dayMap[s.d]) dayMap[s.d] = [];
+    dayMap[s.d].push(s.w + (s.isQ ? ' (Q)' : ''));
+  });
+
+  // Recycle frequency
+  var recycleFreq = RECYCLE_FREQ[zip] || 'Unknown';
+  var recycleLabel = recycleFreq === 'W' ? 'Weekly' : recycleFreq === 'BW' ? 'Bi-Weekly' : recycleFreq;
+
+  var html = '';
+
+  // Location header
+  html += '<div style="background:#eff6ff;border-radius:10px;padding:14px 16px;margin-bottom:14px;">';
+  html += '<div style="font-size:15px;font-weight:900;color:#1e40af;">&#128205; ' + (info.city || 'ZIP ' + zip);
+  if (info.hood) html += ' &middot; ' + info.hood;
+  html += '</div>';
+  html += '<div style="font-size:12px;color:#3b82f6;margin-top:2px;">ZIP ' + zip + ' &middot; Recycling: ' + recycleLabel + '</div>';
+  html += '</div>';
+
+  // Matched neighborhood
+  if (matchedHoods.length > 0) {
+    html += '<div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;padding:12px 16px;margin-bottom:14px;">';
+    html += '<div style="font-size:11px;font-weight:800;color:#16a34a;text-transform:uppercase;letter-spacing:0.5px;">&#9989; Neighborhood Match</div>';
+    matchedHoods.forEach(function(h) {
+      html += '<div style="font-size:13px;font-weight:700;margin-top:4px;">' + h.name;
+      if (h.area) html += ' <span style="font-weight:400;color:#6b7280;">(' + h.area + ')</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Route assignment
+  if (routeMatch) {
+    html += '<div style="background:#dbeafe;border-radius:10px;padding:12px 16px;margin-bottom:14px;">';
+    html += '<div style="font-size:11px;font-weight:800;color:#1e40af;text-transform:uppercase;">&#128666; Assigned Route</div>';
+    html += '<div style="font-size:20px;font-weight:900;color:#1e3a8a;margin-top:4px;">' + routeMatch + '</div>';
+    html += '</div>';
+  }
+
+  // Service days table
+  html += '<div style="margin-bottom:14px;">';
+  html += '<div style="font-size:11px;font-weight:800;color:#374151;text-transform:uppercase;margin-bottom:8px;">&#128197; Available Service Days</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+  html += '<thead><tr style="background:#f1f5f9;"><th style="padding:6px 10px;text-align:left;font-size:10px;font-weight:800;color:#64748b;">Day</th><th style="padding:6px 10px;text-align:left;font-size:10px;font-weight:800;color:#64748b;">Weeks</th><th style="padding:6px 10px;text-align:left;font-size:10px;font-weight:800;color:#64748b;">Type</th></tr></thead><tbody>';
+  var dayOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  dayOrder.forEach(function(day) {
+    if (!dayMap[day]) return;
+    var weeks = dayMap[day];
+    var hasQ = weeks.some(function(w) { return w.indexOf('(Q)') !== -1; });
+    var typeLabel = hasQ ? '<span style="background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;">Q-Route</span>' : '<span style="background:#dcfce7;color:#16a34a;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;">Regular</span>';
+    html += '<tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:7px 10px;font-weight:700;">' + day + '</td>';
+    html += '<td style="padding:7px 10px;color:#6b7280;">' + weeks.join(', ') + '</td>';
+    html += '<td style="padding:7px 10px;">' + typeLabel + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // All neighborhoods in ZIP (collapsed by default)
+  if (zipHoods.length > 0) {
+    html += '<details style="margin-top:8px;"><summary style="font-size:11px;font-weight:700;color:#6b7280;cursor:pointer;">&#128205; All ' + zipHoods.length + ' neighborhoods in ' + zip + '</summary>';
+    html += '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">';
+    zipHoods.forEach(function(h) {
+      html += '<span style="background:#f1f5f9;color:#374151;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;">' + h.name + '</span>';
+    });
+    html += '</div></details>';
+  }
+
+  resultEl.innerHTML = html;
+  ncUpdatePricing();
+}
+
+function ncUpdatePricing() {
+  var el = document.getElementById('ncPricingPreview');
+  if (!el) return;
+  var planCode = document.getElementById('ncPlan').value;
+  var cans = parseInt(document.getElementById('ncCans').value) || 0;
+
+  if (!planCode || !cans) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Select cans &amp; plan to see pricing</div>';
+    return;
+  }
+
+  var plan = NC_PLANS[planCode];
+  if (!plan) return;
+
+  var pricePerClean = plan.prices[cans] || 0;
+  var annualRev, visits;
+
+  if (plan.isAnnual) {
+    // Annual prepaid: price IS the annual price
+    annualRev = pricePerClean;
+    visits = plan.visits;
+    pricePerClean = Math.round(annualRev / visits);
+  } else {
+    visits = plan.visits;
+    annualRev = pricePerClean * visits;
+  }
+
+  var costPerStop = 30.69;
+  var annualCost = Math.round(costPerStop * visits);
+  var profit = annualRev - annualCost;
+  var margin = annualRev > 0 ? Math.round(profit / annualRev * 100) : 0;
+  var profitColor = margin >= 30 ? '#16a34a' : margin >= 15 ? '#ca8a04' : '#dc2626';
+
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">';
+  html += '<div style="background:#eff6ff;border-radius:10px;padding:12px;text-align:center;">';
+  html += '<div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;">Per Cleaning</div>';
+  html += '<div style="font-size:22px;font-weight:900;color:#1e40af;">$' + pricePerClean + '</div>';
+  html += '<div style="font-size:10px;color:#93c5fd;">' + cans + ' cans &middot; ' + plan.label + '</div></div>';
+
+  html += '<div style="background:#f0fdf4;border-radius:10px;padding:12px;text-align:center;">';
+  html += '<div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;">Annual Revenue</div>';
+  html += '<div style="font-size:22px;font-weight:900;color:#16a34a;">$' + annualRev.toLocaleString() + '</div>';
+  html += '<div style="font-size:10px;color:#86efac;">' + visits + ' visits/yr</div></div>';
+  html += '</div>';
+
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">';
+  html += '<div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;">';
+  html += '<div style="font-size:9px;font-weight:700;color:#6b7280;">COST</div>';
+  html += '<div style="font-size:14px;font-weight:800;color:#64748b;">$' + annualCost.toLocaleString() + '</div></div>';
+
+  html += '<div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;">';
+  html += '<div style="font-size:9px;font-weight:700;color:#6b7280;">PROFIT</div>';
+  html += '<div style="font-size:14px;font-weight:800;color:' + profitColor + ';">$' + profit.toLocaleString() + '</div></div>';
+
+  html += '<div style="background:#f8fafc;border-radius:8px;padding:10px;text-align:center;">';
+  html += '<div style="font-size:9px;font-weight:700;color:#6b7280;">MARGIN</div>';
+  html += '<div style="font-size:14px;font-weight:800;color:' + profitColor + ';">' + margin + '%</div></div>';
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+function ncSubmit() {
+  var firstName = (document.getElementById('ncFirstName').value || '').trim();
+  var lastName = (document.getElementById('ncLastName').value || '').trim();
+  var address = (document.getElementById('ncAddress').value || '').trim();
+  var zip = (document.getElementById('ncZip').value || '').trim();
+  var city = (document.getElementById('ncCity').value || '').trim();
+  var phone = (document.getElementById('ncPhone').value || '').trim();
+  var email = (document.getElementById('ncEmail').value || '').trim();
+  var cans = parseInt(document.getElementById('ncCans').value) || 0;
+  var planCode = document.getElementById('ncPlan').value;
+  var notes = (document.getElementById('ncNotes').value || '').trim();
+
+  // Validation
+  if (!firstName || !lastName) return showToast('⚠️', 'Enter first and last name.');
+  if (!address) return showToast('⚠️', 'Enter a street address.');
+  if (!zip || zip.length !== 5) return showToast('⚠️', 'Enter a valid 5-digit ZIP code.');
+  if (!cans) return showToast('⚠️', 'Select number of cans.');
+  if (!planCode) return showToast('⚠️', 'Select a service plan.');
+
+  // Check service area
+  if (!SCHEDULE[zip]) return showToast('⚠️', 'ZIP ' + zip + ' is not in the service area.');
+
+  // Determine route from neighborhood match
+  var addrLower = address.toLowerCase();
+  var assignedRoute = '';
+  var assignedHood = '';
+  NEIGHBORHOODS.forEach(function(h) {
+    if (h.zip !== zip || assignedRoute) return;
+    if (h.streets) {
+      h.streets.forEach(function(st) {
+        if (addrLower.indexOf(st.toLowerCase()) !== -1) {
+          assignedHood = h.name;
+          var rm = (h.area || '').match(/Route\s*(\d+)/i);
+          if (rm) assignedRoute = 'Route ' + rm[1];
+        }
+      });
+    }
+  });
+
+  // Determine service day (pick the first regular slot, or first slot)
+  var slots = SCHEDULE[zip];
+  var regularSlots = slots.filter(function(s) { return !s.isQ; });
+  var primarySlot = regularSlots.length > 0 ? regularSlots[0] : slots[0];
+  var serviceDay = primarySlot.d;
+  var serviceWeek = primarySlot.w;
+
+  var plan = NC_PLANS[planCode];
+  var pricePerClean = plan.prices[cans] || 0;
+  var annualRev = plan.isAnnual ? pricePerClean : pricePerClean * plan.visits;
+
+  var customer = {
+    id: Date.now(),
+    firstName: firstName,
+    lastName: lastName,
+    name: firstName + ' ' + lastName,
+    address: address,
+    city: city,
+    state: 'OH',
+    zip: zip,
+    phone: phone,
+    email: email,
+    cans: cans,
+    plan: planCode,
+    planLabel: plan.label,
+    visits: plan.visits,
+    pricePerClean: pricePerClean,
+    annualRev: annualRev,
+    route: assignedRoute,
+    neighborhood: assignedHood,
+    serviceDay: serviceDay,
+    serviceWeek: serviceWeek,
+    notes: notes,
+    createdAt: new Date().toISOString()
+  };
+
+  var customers = ncLoadCustomers();
+  customers.unshift(customer);
+  ncSaveCustomers(customers);
+
+  // Clear form
+  document.getElementById('ncFirstName').value = '';
+  document.getElementById('ncLastName').value = '';
+  document.getElementById('ncAddress').value = '';
+  document.getElementById('ncZip').value = '';
+  document.getElementById('ncCity').value = '';
+  document.getElementById('ncPhone').value = '';
+  document.getElementById('ncEmail').value = '';
+  document.getElementById('ncCans').value = '2';
+  document.getElementById('ncPlan').value = 'M';
+  document.getElementById('ncNotes').value = '';
+  document.getElementById('ncRouteResult').innerHTML = '<div style="text-align:center;padding:30px 20px;color:#9ca3af;"><div style="font-size:36px;margin-bottom:10px;">&#128269;</div><div style="font-size:13px;font-weight:600;">Enter a ZIP code to auto-detect the service route</div></div>';
+  document.getElementById('ncPricingPreview').innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">Select cans &amp; plan to see pricing</div>';
+
+  ncRenderSaved();
+  showToast('✅', customer.name + ' added — ' + serviceDay + ' ' + serviceWeek + (assignedRoute ? ' · ' + assignedRoute : ''));
+}
+
+function ncRenderSaved() {
+  var customers = ncLoadCustomers();
+  var el = document.getElementById('ncSavedList');
+  var countEl = document.getElementById('ncSavedCount');
+  if (countEl) countEl.textContent = customers.length;
+
+  if (!customers.length) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:#9ca3af;font-size:12px;">No customers added yet</div>';
+    return;
+  }
+
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+  html += '<thead><tr style="background:#f1f5f9;"><th style="padding:5px 8px;text-align:left;font-size:9px;font-weight:800;color:#64748b;">Customer</th>';
+  html += '<th style="padding:5px 8px;text-align:left;font-size:9px;font-weight:800;color:#64748b;">ZIP</th>';
+  html += '<th style="padding:5px 8px;text-align:left;font-size:9px;font-weight:800;color:#64748b;">Plan</th>';
+  html += '<th style="padding:5px 8px;text-align:right;font-size:9px;font-weight:800;color:#64748b;">Annual</th>';
+  html += '<th style="padding:5px 8px;text-align:center;font-size:9px;font-weight:800;color:#64748b;"></th></tr></thead><tbody>';
+
+  customers.forEach(function(c) {
+    var planShort = c.plan || '?';
+    var routeBadge = c.route ? '<span style="background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700;margin-left:4px;">' + c.route + '</span>' : '';
+    html += '<tr style="border-bottom:1px solid #f1f5f9;">';
+    html += '<td style="padding:6px 8px;font-weight:700;">' + c.name + routeBadge + '</td>';
+    html += '<td style="padding:6px 8px;color:#6b7280;">' + c.zip + '</td>';
+    html += '<td style="padding:6px 8px;"><span style="background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:4px;font-size:9px;font-weight:700;">' + planShort + '</span> ' + c.cans + '&#128465;</td>';
+    html += '<td style="padding:6px 8px;text-align:right;font-weight:700;color:#16a34a;">$' + (c.annualRev || 0).toLocaleString() + '</td>';
+    html += '<td style="padding:6px 8px;text-align:center;"><button onclick="ncDeleteCustomer(' + c.id + ')" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:12px;" title="Remove">&#128465;</button></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function ncDeleteCustomer(id) {
+  var customers = ncLoadCustomers().filter(function(c) { return c.id !== id; });
+  ncSaveCustomers(customers);
+  ncRenderSaved();
+  showToast('🗑️', 'Customer removed.');
+}
+
 // ── switchTab ──
 function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -6920,6 +7421,7 @@ function switchTab(name, btn) {
   if (name === 'profit')     { renderProfitKPIs(); showPView('tiers'); }
   if (name === 'pricing')    { /* 2026 static pricing matrix */ }
   if (name === 'comm')       { commLoadStats(); }
+  if (name === 'newcustomer') { ncRenderSaved(); ncUpdatePricing(); }
   if (name === 'manage')     { renderRouteTable(); renderOverrides(); renderRemovedSlots(); }
   if (name === 'calendar')   { renderCalendar(); }
   if (name === 'forecast')   { renderForecast(); }
