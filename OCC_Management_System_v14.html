@@ -7009,7 +7009,7 @@ function showPView(view) {
   if (view === 'zips')   { renderZips(); }
   if (view === 'custs')  { renderCusts(); }
   if (view === 'routes') { if (typeof renderRoutePL === 'function') renderRoutePL(); }
-  if (view === 'score')  { if (typeof renderRouteScore === 'function') renderRouteScore(); }
+  if (view === 'score')  { renderProfit(); }
 }
 
 // ── renderTiers ──
