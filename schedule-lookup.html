@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ohio Clean Cans - Schedule Lookup</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a2e7a;
+  --blue: #0056DF;
+  --blue-light: #1a6ef5;
+  --blue-xlight: #e8f0fe;
+  --red: #CC2222;
+  --red-light: #fef2f2;
+  --orange: #FF9D00;
+  --orange-light: #fff7ed;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --gray: #6b7280;
+  --lgray: #f3f4f6;
+  --border: #e5e7eb;
+  --white: #ffffff;
+  --text: #111827;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: linear-gradient(135deg, #f0f2f7 0%, #e8ecf4 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
+.header {
+  background: var(--navy);
+  color: #fff;
+  width: 100%;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.logo-hex {
+  width: 40px; height: 40px;
+  background: var(--blue);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.brand-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900; font-size: 18px; letter-spacing: 0.5px;
+}
+.brand-sub {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: rgba(255,255,255,0.6);
+}
+
+/* Main Card */
+.card {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  max-width: 520px;
+  width: 95%;
+  margin: 32px auto;
+  overflow: hidden;
+}
+.card-header {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--navy) 100%);
+  color: white;
+  padding: 28px 28px 24px;
+  text-align: center;
+}
+.card-header h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 22px; font-weight: 900; margin-bottom: 6px;
+}
+.card-header p {
+  font-size: 13px; opacity: 0.8;
+}
+.card-body { padding: 28px; }
+
+/* Form */
+label {
+  display: block; font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--gray); margin-bottom: 6px;
+}
+.input-wrap { position: relative; margin-bottom: 20px; }
+.input-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 16px; pointer-events: none;
+}
+input[type="text"] {
+  width: 100%; padding: 12px 12px 12px 40px;
+  border: 2px solid var(--border); border-radius: 10px;
+  font-size: 15px; font-family: inherit;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus {
+  outline: none; border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,86,223,0.1);
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: white; border: 2px solid var(--blue);
+  border-radius: 10px; margin-top: 4px;
+  max-height: 260px; overflow-y: auto;
+  z-index: 100; display: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.dd-item {
+  padding: 10px 14px; cursor: pointer;
+  border-bottom: 1px solid var(--lgray);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.dd-item:last-child { border-bottom: none; }
+.dd-item:hover, .dd-item.active { background: var(--blue-xlight); }
+.dd-name { font-weight: 700; font-size: 13px; }
+.dd-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.dd-zip {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  background: var(--blue-xlight); padding: 2px 8px;
+  border-radius: 6px; white-space: nowrap;
+}
+.dd-none {
+  padding: 16px; text-align: center;
+  color: var(--gray); font-size: 13px;
+}
+
+/* Day Picker */
+.day-picker {
+  display: none; margin-bottom: 20px;
+  padding: 14px 16px; background: var(--orange-light);
+  border: 2px solid var(--orange); border-radius: 12px;
+}
+.day-picker-label {
+  font-size: 12px; font-weight: 800; color: var(--orange);
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+}
+.day-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.day-btn {
+  padding: 8px 18px; border: 2px solid var(--orange); border-radius: 8px;
+  background: #fff; font-family: 'Montserrat', sans-serif;
+  font-size: 13px; font-weight: 900; color: var(--orange);
+  cursor: pointer; transition: all 0.15s;
+}
+.day-btn:hover { background: var(--orange); color: #fff; }
+
+/* Result */
+.result { display: none; margin-top: 4px; }
+.result.show { display: block; }
+
+.result-next {
+  background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+  border: 2px solid #86efac; border-radius: 14px;
+  padding: 24px; text-align: center;
+}
+.result-next .hood-line {
+  font-size: 12px; font-weight: 700; color: var(--green);
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+}
+.result-next .date-big {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px; font-weight: 900; color: #065f46;
+  margin: 8px 0 4px;
+}
+.result-next .days-away {
+  font-size: 14px; font-weight: 700; color: var(--green);
+}
+.result-next .recycle-badge {
+  display: inline-block; margin-top: 12px; padding: 4px 14px;
+  border-radius: 8px; font-size: 12px; font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+}
+.recycle-w { background: var(--green-light); color: var(--green); }
+.recycle-bw { background: #ede9fe; color: #6d28d9; }
+
+/* Schedule list */
+.sched-list { margin-top: 16px; }
+.sched-list h3 {
+  font-size: 13px; font-weight: 800; color: var(--gray);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 10px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--lgray);
+}
+.sched-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 4px;
+  font-size: 13px;
+}
+.sched-row:nth-child(even) { background: var(--lgray); }
+.sched-date { font-weight: 700; }
+.sched-day { color: var(--gray); font-size: 12px; }
+.sched-away {
+  font-size: 11px; font-weight: 700; padding: 2px 10px;
+  border-radius: 6px;
+}
+.sched-away.soon { background: #dcfce7; color: #065f46; }
+.sched-away.later { background: var(--blue-xlight); color: var(--blue); }
+
+/* Error */
+.error-box {
+  display: none; padding: 14px 16px;
+  background: var(--red-light); border: 2px solid var(--red);
+  border-radius: 10px; color: var(--red);
+  font-weight: 600; font-size: 13px; margin-top: 4px;
+}
+.error-box.show { display: block; }
+
+/* Footer */
+.footer {
+  text-align: center; padding: 20px;
+  font-size: 12px; color: var(--gray);
+}
+.footer a { color: var(--blue); text-decoration: none; font-weight: 600; }
+
+/* Mobile */
+@media (max-width: 480px) {
+  .card { margin: 16px auto; }
+  .card-header { padding: 20px 20px 18px; }
+  .card-header h1 { font-size: 19px; }
+  .card-body { padding: 20px; }
+  .result-next .date-big { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-hex">&#x267B;</div>
+  <div>
+    <div class="brand-name">OHIO CLEAN CANS</div>
+    <div class="brand-sub">MANAGEMENT SYSTEM</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h1>When's My Next Pickup?</h1>
+    <p>Enter your address or ZIP code to find your next service date</p>
+  </div>
+  <div class="card-body">
+    <label for="addrInput">Your Address or ZIP Code</label>
+    <div class="input-wrap">
+      <span class="input-icon">&#x1F50D;</span>
+      <input type="text" id="addrInput" placeholder="e.g. 123 Stillwater Dr or 45039"
+             oninput="onInput(this.value)" onkeydown="onKey(event)" autocomplete="off">
+      <div class="dropdown" id="dropdown"></div>
+    </div>
+
+    <div class="day-picker" id="dayPicker">
+      <div class="day-picker-label" id="dayPickerLabel"></div>
+      <div class="day-btns" id="dayBtns"></div>
+    </div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <div class="result" id="resultBox">
+      <div class="result-next" id="resultNext"></div>
+      <div class="sched-list" id="schedList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <a href="tel:5138602080">(513) 860-2080</a> &middot;
+  <a href="mailto:info@ohiocleancans.com">info@ohiocleancans.com</a><br>
+  &copy; 2026 Ohio Clean Cans LLC
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA (synced from OCC Management System)
+// ══════════════════════════════════════════════════════════
+
+const ANCHOR_W = 4;
+const ANCHOR_MONDAY = new Date(2026, 1, 23);
+const DAY_OFF = { Monday:0, Tuesday:1, Wednesday:2, Thursday:3, Friday:4, Saturday:5 };
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WDAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const ZIP_INFO = {
+  "45002": { city: "Cleves", hood: "" },
+  "45011": { city: "Liberty Township", hood: "" },
+  "45014": { city: "Fairfield", hood: "" },
+  "45030": { city: "Harrison", hood: "" },
+  "45034": { city: "Kings Mills", hood: "" },
+  "45036": { city: "Lebanon", hood: "" },
+  "45039": { city: "Maineville", hood: "" },
+  "45040": { city: "Mason", hood: "" },
+  "45044": { city: "Liberty Township", hood: "" },
+  "45050": { city: "Monroe", hood: "" },
+  "45052": { city: "North Bend", hood: "" },
+  "45065": { city: "South Lebanon", hood: "" },
+  "45069": { city: "West Chester", hood: "" },
+  "45102": { city: "Amelia", hood: "" },
+  "45103": { city: "Batavia", hood: "" },
+  "45122": { city: "Goshen", hood: "" },
+  "45140": { city: "Loveland", hood: "" },
+  "45150": { city: "Milford", hood: "" },
+  "45152": { city: "Morrow", hood: "" },
+  "45174": { city: "Terrace Park", hood: "" },
+  "45202": { city: "Cincinnati", hood: "Downtown" },
+  "45203": { city: "Cincinnati", hood: "Lower Price Hill" },
+  "45205": { city: "Cincinnati", hood: "West End" },
+  "45206": { city: "Cincinnati", hood: "Evanston" },
+  "45207": { city: "Cincinnati", hood: "Walnut Hills" },
+  "45208": { city: "Cincinnati", hood: "Hyde Park" },
+  "45209": { city: "Cincinnati", hood: "Oakley" },
+  "45211": { city: "Cincinnati", hood: "Cheviot" },
+  "45212": { city: "Cincinnati", hood: "Norwood" },
+  "45213": { city: "Cincinnati", hood: "Silverton" },
+  "45215": { city: "Cincinnati", hood: "Reading / Wyoming" },
+  "45219": { city: "Cincinnati", hood: "Clifton" },
+  "45220": { city: "Cincinnati", hood: "Clifton Heights" },
+  "45224": { city: "Cincinnati", hood: "Hartwell" },
+  "45225": { city: "Cincinnati", hood: "Clifton Heights" },
+  "45226": { city: "Cincinnati", hood: "Columbia Tusculum" },
+  "45227": { city: "Cincinnati", hood: "Mariemont" },
+  "45230": { city: "Cincinnati", hood: "Anderson Township" },
+  "45231": { city: "Cincinnati", hood: "Groesbeck" },
+  "45233": { city: "Cincinnati", hood: "Green Township" },
+  "45236": { city: "Cincinnati", hood: "Kenwood / Deer Park" },
+  "45237": { city: "Cincinnati", hood: "Roselawn" },
+  "45238": { city: "Cincinnati", hood: "Delhi Township" },
+  "45239": { city: "Cincinnati", hood: "Mt. Airy" },
+  "45240": { city: "Cincinnati", hood: "Forest Park" },
+  "45241": { city: "Cincinnati", hood: "Sharonville" },
+  "45242": { city: "Cincinnati", hood: "Blue Ash / Montgomery" },
+  "45243": { city: "Cincinnati", hood: "Indian Hill / Madeira" },
+  "45244": { city: "Cincinnati", hood: "Anderson Township" },
+  "45245": { city: "Cincinnati", hood: "Anderson Township" },
+  "45246": { city: "Cincinnati", hood: "Glendale" },
+  "45247": { city: "Cincinnati", hood: "White Oak" },
+  "45248": { city: "Cincinnati", hood: "Delhi Township" },
+  "45249": { city: "Cincinnati", hood: "Symmes Township" },
+  "45251": { city: "Cincinnati", hood: "Colerain Township" },
+  "45252": { city: "Cincinnati", hood: "Colerain Township" },
+  "45253": { city: "Cincinnati", hood: "Delhi Township" },
+  "45255": { city: "Cincinnati", hood: "Mt. Washington" },
+};
+
+const RECYCLE_FREQ = {
+  "45002":"W","45011":"W","45014":"W","45030":"W","45034":"W","45036":"W",
+  "45039":"W","45040":"W","45044":"W","45050":"W","45052":"W","45065":"W",
+  "45069":"W","45102":"BW","45103":"BW","45122":"W","45140":"W","45150":"W",
+  "45152":"W","45174":"W","45202":"BW","45203":"BW","45205":"BW","45206":"BW",
+  "45207":"BW","45208":"BW","45209":"BW","45211":"W","45212":"BW","45213":"W",
+  "45215":"W","45219":"BW","45220":"BW","45224":"BW","45225":"BW","45226":"BW",
+  "45227":"BW","45230":"BW","45231":"W","45233":"W","45236":"W","45237":"W",
+  "45238":"W","45239":"BW","45240":"BW","45241":"W","45242":"BW","45243":"BW",
+  "45244":"W","45245":"W","45246":"W","45247":"BW","45248":"BW","45249":"W",
+  "45251":"W","45252":"W","45253":"BW","45255":"BW"
+};
+
+const SCHEDULE = {
+  "45002": [{w:"W1",d:"Tuesday"},{w:"W4",d:"Tuesday"}],
+  "45011": [{w:"W1",d:"Friday"},{w:"W2",d:"Tuesday",isQ:true},{w:"W2",d:"Wednesday"},{w:"W4",d:"Monday"},{w:"W4",d:"Thursday"}],
+  "45014": [{w:"W2",d:"Friday",isQ:true},{w:"W3",d:"Wednesday"},{w:"W4",d:"Monday"}],
+  "45030": [{w:"W1",d:"Thursday",isQ:true,firstDate:"2026-03-05"}],
+  "45034": [{w:"W1",d:"Monday"}],
+  "45036": [{w:"W1",d:"Monday"}],
+  "45039": [{w:"W2",d:"Wednesday"},{w:"W3",d:"Thursday"},{w:"W4",d:"Friday"},{w:"W4",d:"Tuesday"}],
+  "45040": [{w:"W1",d:"Friday"},{w:"W1",d:"Monday"},{w:"W1",d:"Tuesday"},{w:"W2",d:"Tuesday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Thursday"},{w:"W3",d:"Wednesday",isQ:true,firstDate:"2026-04-15"},{w:"W4",d:"Wednesday"}],
+  "45044": [{w:"W1",d:"Friday"},{w:"W1",d:"Monday"},{w:"W2",d:"Tuesday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Monday"},{w:"W4",d:"Wednesday"}],
+  "45050": [{w:"W1",d:"Friday"},{w:"W2",d:"Tuesday"}],
+  "45052": [{w:"W4",d:"Tuesday"}],
+  "45065": [{w:"W2",d:"Thursday"}],
+  "45069": [{w:"W1",d:"Friday",isQ:true},{w:"W2",d:"Tuesday"},{w:"W2",d:"Wednesday"},{w:"W4",d:"Monday"},{w:"W4",d:"Thursday"}],
+  "45102": [{w:"W1",d:"Thursday"},{w:"W3",d:"Friday"},{w:"W3",d:"Monday",isQ:true}],
+  "45103": [{w:"W1",d:"Thursday"},{w:"W2",d:"Friday"},{w:"W2",d:"Thursday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Friday"},{w:"W4",d:"Monday"}],
+  "45122": [{w:"W1",d:"Wednesday"},{w:"W4",d:"Wednesday"}],
+  "45140": [{w:"W1",d:"Thursday"},{w:"W2",d:"Friday"},{w:"W2",d:"Monday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Thursday"},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Thursday",isQ:true},{w:"W4",d:"Tuesday",isQ:true}],
+  "45150": [{w:"W1",d:"Thursday"},{w:"W1",d:"Tuesday"},{w:"W2",d:"Friday"},{w:"W2",d:"Monday"},{w:"W2",d:"Tuesday",isQ:true},{w:"W3",d:"Friday"},{w:"W3",d:"Thursday"},{w:"W4",d:"Thursday"},{w:"W4",d:"Wednesday"}],
+  "45152": [{w:"W1",d:"Monday",isQ:true},{w:"W2",d:"Thursday"},{w:"W2",d:"Wednesday",isQ:true},{w:"W4",d:"Friday"},{w:"W4",d:"Saturday",isQ:true},{w:"W4",d:"Tuesday"}],
+  "45174": [{w:"W1",d:"Tuesday"},{w:"W3",d:"Tuesday",isQ:true}],
+  "45202": [{w:"W2",d:"Friday",isQ:true},{w:"W3",d:"Monday"}],
+  "45203": [{w:"W3",d:"Monday"}],
+  "45205": [{w:"W4",d:"Tuesday"}],
+  "45206": [{w:"W1",d:"Wednesday"}],
+  "45207": [{w:"W1",d:"Wednesday",isQ:true}],
+  "45208": [{w:"W1",d:"Wednesday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday"}],
+  "45209": [{w:"W1",d:"Wednesday"},{w:"W2",d:"Wednesday",isQ:true},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Wednesday"}],
+  "45211": [{w:"W1",d:"Thursday",isQ:true},{w:"W2",d:"Thursday",isQ:true}],
+  "45212": [{w:"W3",d:"Monday",isQ:true},{w:"W3",d:"Tuesday"},{w:"W3",d:"Wednesday",isQ:true}],
+  "45213": [{w:"W3",d:"Friday"},{w:"W3",d:"Tuesday",isQ:true},{w:"W3",d:"Wednesday"}],
+  "45215": [{w:"W1",d:"Thursday",isQ:true},{w:"W3",d:"Wednesday"},{w:"W4",d:"Tuesday"}],
+  "45219": [{w:"W3",d:"Monday"}],
+  "45220": [{w:"W2",d:"Thursday",isQ:true},{w:"W2",d:"Wednesday",isQ:true},{w:"W3",d:"Monday",isQ:true}],
+  "45224": [{w:"W4",d:"Tuesday",isQ:true}],
+  "45225": [{w:"W2",d:"Thursday",isQ:true}],
+  "45226": [{w:"W1",d:"Wednesday"},{w:"W3",d:"Wednesday"}],
+  "45227": [{w:"W2",d:"Friday"},{w:"W2",d:"Tuesday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Friday"}],
+  "45230": [{w:"W2",d:"Thursday"},{w:"W3",d:"Monday"},{w:"W4",d:"Wednesday"}],
+  "45231": [{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Tuesday"}],
+  "45233": [{w:"W1",d:"Thursday"},{w:"W4",d:"Tuesday"}],
+  "45236": [{w:"W1",d:"Friday"},{w:"W1",d:"Wednesday",isQ:true},{w:"W2",d:"Wednesday"},{w:"W3",d:"Friday"},{w:"W4",d:"Friday"},{w:"W4",d:"Thursday"}],
+  "45237": [{w:"W3",d:"Friday"},{w:"W3",d:"Wednesday"}],
+  "45238": [{w:"W1",d:"Thursday"},{w:"W4",d:"Tuesday"}],
+  "45239": [{w:"W1",d:"Thursday"},{w:"W2",d:"Thursday",isQ:true}],
+  "45240": [{w:"W3",d:"Wednesday"}],
+  "45241": [{w:"W1",d:"Friday"},{w:"W1",d:"Thursday",isQ:true},{w:"W2",d:"Monday"},{w:"W2",d:"Tuesday",isQ:true},{w:"W4",d:"Thursday"},{w:"W4",d:"Tuesday",isQ:true}],
+  "45242": [{w:"W1",d:"Tuesday",isQ:true},{w:"W1",d:"Thursday"},{w:"W1",d:"Friday"},{w:"W2",d:"Monday"},{w:"W3",d:"Wednesday"},{w:"W4",d:"Friday"},{w:"W4",d:"Thursday"},{w:"W4",d:"Tuesday"}],
+  "45243": [{w:"W1",d:"Tuesday"},{w:"W1",d:"Thursday",isQ:true},{w:"W2",d:"Tuesday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday"},{w:"W3",d:"Thursday"},{w:"W3",d:"Friday"},{w:"W4",d:"Thursday"}],
+  "45244": [{w:"W1",d:"Tuesday"},{w:"W1",d:"Wednesday"},{w:"W2",d:"Friday"},{w:"W3",d:"Friday"},{w:"W3",d:"Monday"},{w:"W3",d:"Tuesday"},{w:"W4",d:"Wednesday"}],
+  "45245": [{w:"W1",d:"Thursday"},{w:"W2",d:"Friday"},{w:"W2",d:"Thursday"},{w:"W3",d:"Friday"},{w:"W3",d:"Monday",isQ:true},{w:"W3",d:"Tuesday"}],
+  "45246": [{w:"W3",d:"Wednesday"}],
+  "45247": [{w:"W2",d:"Friday",isQ:true},{w:"W2",d:"Thursday",isQ:true},{w:"W4",d:"Tuesday",isQ:true}],
+  "45248": [{w:"W4",d:"Tuesday",isQ:true}],
+  "45249": [{w:"W1",d:"Friday"},{w:"W4",d:"Tuesday"}],
+  "45251": [{w:"W3",d:"Wednesday",isQ:true}],
+  "45252": [{w:"W2",d:"Friday",isQ:true}],
+  "45253": [{w:"W2",d:"Wednesday",isQ:true},{w:"W3",d:"Wednesday",isQ:true}],
+  "45255": [{w:"W2",d:"Friday"},{w:"W2",d:"Thursday"},{w:"W3",d:"Monday"},{w:"W3",d:"Tuesday",isQ:true},{w:"W4",d:"Wednesday",isQ:true}],
+};
+
+// ══════════════════════════════════════════════════════════
+// NEIGHBORHOODS (street-level lookup data)
+// ══════════════════════════════════════════════════════════
+const NEIGHBORHOODS = NEIGHBORHOOD_DATA();
+function NEIGHBORHOOD_DATA() {
+// This function returns the neighborhoods array — kept as a function to
+// allow the large data block to be collapsed in editors.
+return [
+  {name:"Greenshire",area:"(Halifax Dr area)",zip:"45002",slots:[{w:"W4",d:"Tuesday"}],streets:["Beacon Woods Dr","Cambridge Grove Court","Charlies Way","Coronet Court","Greenshire Dr","Halifax Dr","Jordan Ridge Drive","Peterborough Dr","Zion Road"]},
+  {name:"Cleves",area:"(Village of Cleves)",zip:"45002",slots:[{w:"W4",d:"Tuesday"}],streets:["Beacon Woods Dr","Cambridge Grove Court","Charlies Way","Coronet Court","Greenshire Dr","Halifax Dr","Jordan Ridge Drive","Peterborough Dr","Zion Road"]},
+  {name:"Harbour Towne Park",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Mariners Way","Osprey Pointe Dr"]},
+  {name:"Reserves at Elks Pointe",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Glen Abby Ct","Glen Abby Court"]},
+  {name:"Reserves of Liberty",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Grandin Ridge Dr"]},
+  {name:"Snow Hill",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Mogul Lane","Snowbird Dr"]},
+  {name:"Vista Verde",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Sebring Court","Willow Springs Dr","Willow Springs Drive"]},
+  {name:"Wynds of Liberty",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Brooke Hill Ct.","Harvest Avenue","Winter Park Dr","Winter Park Drive"]},
+  {name:"Liberty Knoll",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Serenity Court"]},
+  {name:"Liberty Township",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Back Trail Ct","CALLAWAY DR","Cobblestone Lane","Deer Vly","Eldon Dr","Eldon Drive","Molly Ct","Northlake Court","Springhill Court","Springhill Ct"]},
+  {name:"Hamilton",area:"W1 (odd) Fri",zip:"45011",slots:[{w:"W1",d:"Friday"}],streets:["Chablis Dr","Conley Bottom Court","Osprey Pointe Dr"]},
+  {name:"Hamilton",area:"W2 (even) Wed",zip:"45011",slots:[{w:"W2",d:"Wednesday"}],streets:["Hearthwood Drive","Osage Dr","Osage Drive","wexford way"]},
+  {name:"Liberty Township",area:"W2 (even) Wed",zip:"45011",slots:[{w:"W2",d:"Wednesday"}],streets:["Carriage Oak Way","Drew Drive","Liberty Bell Dr","Logsdon Road","Rippling Lake Ct","Sparks Ln"]},
+  {name:"Fairfield Township",area:"Q-Route W2 (even) Tue",zip:"45011",slots:[{w:"W2",d:"Tuesday",isQ:true}],streets:["Lindley Way","Newkirk Drive"]},
+  {name:"Knolls of Liberty",area:"W4 (even) Mon",zip:"45011",slots:[{w:"W4",d:"Monday"}],streets:["Graybirch Knoll"]},
+  {name:"Logsdon Ridge",area:"W4 (even) Mon",zip:"45011",slots:[{w:"W4",d:"Monday"}],streets:["Peak Drive"]},
+  {name:"Liberty Township",area:"W4 (even) Mon",zip:"45011",slots:[{w:"W4",d:"Monday"}],streets:["Hollow Ridge Drive"]},
+  {name:"Hamilton",area:"W4 (even) Mon",zip:"45011",slots:[{w:"W4",d:"Monday"}],streets:["Fairways Drive"]},
+  {name:"Carriage Hill",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Carriage Oak Way","Stony Run Court","Stony Run Ct.","Trails Run Court","Trails Run Ct","Winding Creek","Winding Creek Blvd"]},
+  {name:"Turnbridge",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Laurel Run Dr","Laurel Run Drive","Watoga Drive"]},
+  {name:"Cherokee Estates",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Selu Drive","WATOGA DR","Yamassee Drive"]},
+  {name:"Aspen Trails",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Snow Valley Lane"]},
+  {name:"Creekside Meadows",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Springleaf Drive"]},
+  {name:"Falling Water Reserve",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Woodmansee Way"]},
+  {name:"Carriage Crossing",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Tilbury Trail"]},
+  {name:"Woodmoor Terrace",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Rock Springs Drive"]},
+  {name:"Lakota Ridge",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Lakota Ridge Drive"]},
+  {name:"Liberty Township",area:"W4 (even) Thu",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Old Line Lane","Trails Run Court","Trails Run Ct"]},
+  {name:"Hamilton",area:"W4 (even) Mon",zip:"45011",slots:[{w:"W4",d:"Thursday"}],streets:["Linda Lane","Northlake Court","todd place","WATOGA DR"]},
+  {name:"Fairfield",area:"Route 3 (Pineview Ct)",zip:"45014",slots:[{w:"W4",d:"Monday"}],streets:["Pineview Court","Pineview Ct"]},
+  {name:"Fairfield",area:"Route 4 (Pleasantdale)",zip:"45014",slots:[{w:"W3",d:"Wednesday"}],streets:["Pleasantdale Terrace"]},
+  {name:"Fairfield",area:"Q-Route (Ricky Dr)",zip:"45014",slots:[{w:"W2",d:"Friday",isQ:true}],streets:["Ricky Dr","Ricky Drive"]},
+  {name:"Whitewater Trails",area:"Q-Route",zip:"45030",slots:[{w:"W1",d:"Thursday",isQ:true,firstDate:"2026-03-05"}],streets:["Baldridge Court","Barney Court","Forest Hill Drive","Hickory Court","Springfield Dr","Trailhead Place","Valley Trails Dr","Vista View Circle","Whitewater Dr","Whitewater Trails Blvd"]},
+  {name:"Kings Mills",area:"Route 1",zip:"45034",slots:[{w:"W1",d:"Monday"}],streets:["River Shore Court","River Shore Ct","Rivershore Ct"]},
+  {name:"Highlands at Heritage Hill",area:"Route 1",zip:"45036",slots:[{w:"W1",d:"Monday"}],streets:["Ambleside Dr","Bunnell Road","Eagle Hill Ct","Harvest Lane","Highlands Trail","Highlands Trl","Ivy Farm Ct"]},
+  {name:"Rivercrest",area:"Route 1",zip:"45039",slots:[{w:"W4",d:"Friday"}],streets:["Stillwater Drive","Stillwater Dr","Scioto Court","Scioto Ct","Shenango Court","Shenango Ct","Grand River Court","Grand River Ct","Marsh Creek Lane","Marsh Creek Ln","Harker's Run","Harker`s Run","Haverhill Lane","Haverhill Ln","Macaulay Blvd","Macaulay Boulevard","Hempston Circle","Hempston Cir"]},
+  {name:"Miami Bluffs",area:"Route 1",zip:"45039",slots:[{w:"W3",d:"Thursday"},{w:"W4",d:"Friday"}],streets:["Allegany Trail","Amberwood Way","Autumn Run Dr","Autumn Run Drive","Candlemakers","French Ct","French Court","Huntwick Lane","Huntwick Ln","Indian Bluffs Drive","Indian Bluffs Dr","Island Pines Place","Island Pines Pl","Misty Cove","Misty Cv","Owls Nest Ct","Owls Nest Court","Pine Grove Ln","Pine Grove Lane","Polebrook Ct","Polebrook Court","River Forest Dr","River Forest Drive","Saddleback Place","Sanctuary Lane","Sanctuary Ln","Shawnee Run Dr","Shawnee Run Drive","Simpson Trace","South Cove Drive","S Cove Dr","Turning Point Lane","Turning Point Ln","Watercrest Ct","Watercrest Court","Weavers Lane","Weavers Ln"]},
+  {name:"Grand Legacy",area:"Route 2A",zip:"45039",slots:[{w:"W4",d:"Friday"},{w:"W4",d:"Tuesday"}],streets:["Bannock Drive","Bannock Dr","Berringer Ct","Berringer Court","Creek Woods Place","Creek Woods Pl","Crystal Lake Ln","Crystal Lake Lane","Eastman Lane","W. Eastman Lane","West Eastman Lane","Erie Dr","Erie Drive","Glen Abbey Lane","Glen Abbey Ln","Grand Legacy Dr","Grand Legacy Drive","Habbin Drive","Habbin Dr","Hidden Oaks Court","Hidden Oaks Ct","Hoster Circle","Hoster Cir","Kelso Drive","Kelso Dr","Kempton Lane","Kempton Ln","Masters Row","Piper Glen Dr","Piper Glen Drive","Quellin Blvd","Quellin Boulevard","Ramon Ct","Ramon CT","Ramon Court","Stone Lake Dr","Stone Lake Drive","Whispering Creek Court","Whispering Creek Ct","Wilderness Way"]},
+  {name:"Indian Pointe",area:"Route 4",zip:"45039",slots:[{w:"W2",d:"Wednesday"}],streets:["Bayberry Court","Bayberry Ct","Chaucer Pl","Chaucer Place","Coneflower Ct","Coneflower Court","Durbin Terrace","Exeter Pl","Exeter Place","Indian Pointe Drive","Indian Pointe Dr","Jewelweed Court","Jewelweed Ct","Kilbarron Drive","Kilbarron Dr","Landen Drive","Landen Dr","Linford Circle","Linford Cir","Stableview Circle","Stableview Cir","Tabard Ct","Tabard Court","West Fosters Maineville Road","W. Fosters Maineville Road","Fosters Maineville Road"]},
+  {name:"Carmelle Woods",area:"(Riverstone Way)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Carmelle Woods Dr","Highland Green Dr","Riverstone Way","Stone Ridge Dr"]},
+  {name:"Cherry Brook",area:"(Wild Cherry Way)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Cherry Brook Ln","Cherry Leaf Ct","Wild Cherry Way"]},
+  {name:"Hudson Hills",area:"(Bouleware Blvd)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Bouleware Blvd","Hudson Hills Ln"]},
+  {name:"Crooked Tree Preserve",area:"(Magnolia Grove)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Birch View Drive","Magnolia Grove Lane","Maple View Drive","Sentinel Oak Drive","Sycamore View Drive","Willow View Drive"]},
+  {name:"Meadows of Willow Brooke",area:"(Fawn Crossing Dr)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Fawn Crossing Drive"]},
+  {name:"Marival at Weatherstone",area:"(Marival Way - condo)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Marival Way"]},
+  {name:"Mason",area:"Route 1 Mon",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Blue Jay Way","Carmelle Woods Dr","Chatsworth Dr","Chatsworth Drive","Eagle View Drive","Falling Brook Drive","Kingfisher Ct","Red Tail Ln","Riverside Dr","Riverstone Way","Springview Circle","Starling way"]},
+  {name:"Willow Brooke",area:"(Blue Jay Way area)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Blue Jay Way","Chatsworth Dr","Chatsworth Drive","Kingfisher Ct","Starling way"]},
+  {name:"Falling Brook",area:"(Falling Brook Dr)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Falling Brook Drive"]},
+  {name:"Hamptons at Thorngate",area:"(Grasmere Run)",zip:"45040",slots:[{w:"W1",d:"Monday"}],streets:["Grasmere Run","Rydal Ln","Thorngate Dr"]},
+  {name:"Chestnut Hill",area:"(Saddletop area)",zip:"45040",slots:[{w:"W3",d:"Thursday"}],streets:["Batsche Trails","Braid Ln","Chestnut Hill Dr","Citation Ct","Homestretch Ln","Saddletop Ridge Ln","Winning Stakes"]},
+  {name:"Cowan",area:"(Cowan Dr)",zip:"45040",slots:[{w:"W3",d:"Thursday"}],streets:["Cowan Drive"]},
+  {name:"Mason Oaks",area:"(Mason Oaks Dr)",zip:"45040",slots:[{w:"W3",d:"Thursday"}],streets:["Mason Oaks Drive"]},
+  {name:"Mason",area:"Route 1 Thu",zip:"45040",slots:[{w:"W3",d:"Thursday"}],streets:["Big Oak Circle","English Garden Way","Foxfield Dr","Golden Meadow Dr","Manorlake dr","Meadow Drive","Parklake Drive","spring valley circle"]},
+  {name:"Long Cove",area:"Route 2",zip:"45040",slots:[{w:"W1",d:"Tuesday"},{w:"W2",d:"Tuesday"}],streets:["Bayside Court","Bayside Ct","Coveview CT.","Coveview Court","Emerald Isle","North Shore Place","South Shore Pl","South Shore Place","Stillwater Isle","Winding Cape Way"]},
+  {name:"Mason",area:"Route 2 Tue",zip:"45040",slots:[{w:"W1",d:"Tuesday"},{w:"W2",d:"Tuesday"}],streets:["Abilene trail"]},
+  {name:"Arbor Creek",area:"(Melampy Creek Ln)",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Melampy Creek Lane"]},
+  {name:"Crooked Tree Meadows",area:"(Top Flite Ln)",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Top Flite Lane"]},
+  {name:"Mason",area:"Route 2 Wed",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Bentwood Dr","Frye Park Circle","Kings Mills Road","Lakeview Drive","Rosewood Lane","blossom court"]},
+  {name:"Montclaire",area:"(Cedar Knoll Dr)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Cedar Knoll Drive"]},
+  {name:"Charleston Park",area:"(Charleston View Dr)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Charleston View Drive"]},
+  {name:"Stonegate",area:"(Hedgewood Cir)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Hedgewood Circle","Hunters Trail"]},
+  {name:"Losh Landing",area:"(Suncrest Ln)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Suncrest Lane"]},
+  {name:"Montgomery Farms",area:"(Swan Pl)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Swan Pl"]},
+  {name:"Walnut Meadows",area:"(Walnut Meadows Dr)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["walnut meadows drive"]},
+  {name:"Arbor Creek",area:"(Ivy Grove Place)",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Ivy Grove Place"]},
+  {name:"Mason",area:"Route 2/3 Fri",zip:"45040",slots:[{w:"W1",d:"Friday"}],streets:["Dawning Drive","Firethorne dr","JEFFERY CT","Simpson Creek Way"]},
+  {name:"The Trails of Four Bridges",area:"Route 4",zip:"45040",slots:[{w:"W4",d:"Wednesday"},{w:"W3",d:"Wednesday",isQ:true,firstDate:"2026-04-15"}],streets:["Acadia Ln","Braid Lane","Braid Ln","Claiborne Ct","Dawning Drive","Heritage Club Dr","Joseph Ln","Lake Front","MacDonald Court","MacKenzie Court","Maxwell Drive","Neville Court","Sarah dr","Seneca Dr","Sherbourne Court","Sherbourne Ct # B","Simpson Creek Way","Stepping Stone Dr","Waterside Drive","east circle dr"]},
+  {name:"Mansion of the Meadows",area:"(Mansion Circle)",zip:"45040",slots:[{w:"W4",d:"Wednesday"}],streets:["Mansion Circle"]},
+  {name:"Heritage Club",area:"(Heritage Club Dr)",zip:"45040",slots:[{w:"W4",d:"Wednesday"}],streets:["Heritage Club Dr","Neville Court","Sherbourne Court","Sherbourne Ct # B"]},
+  {name:"Eagle View Village",area:"(Eagle View Dr)",zip:"45040",slots:[{w:"W4",d:"Wednesday"}],streets:["Eagle View Drive","Grand Cypress Way","Inverness Way","Pebble Creek Ct","Prestwick Court","Turtle Point Place"]},
+  {name:"Durfield Estates",area:"(Foxfield Dr)",zip:"45040",slots:[{w:"W4",d:"Wednesday"}],streets:["Foxfield Dr"]},
+  {name:"Roberts Park",area:"(Palmetto/Sabal Way)",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Palmetto Dr","Palmetto Drive","Roberts Park Dr","Sabal Way","Sentinel Oak Drive"]},
+  {name:"Village Lakes",area:"(Parklake Dr)",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["E Village Drive","Farmbrooke Court","Fieldsedge Dr","Parklake Dr","Pondfield Ln","Towneside Court","Village Lakes Dr"]},
+  {name:"Greenbriar",area:"(Lake Front condo)",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Clearwater Dr","Edgewater Dr","Lake Front Dr","Twin Lakes Dr"]},
+  {name:"Mason",area:"Route 4",zip:"45040",slots:[{w:"W2",d:"Wednesday"}],streets:["Hanover Drive","Mansion Circle"]},
+  {name:"Trails of Four Bridges",area:"W1/W2/W4 cycle",zip:"45044",slots:[{w:"W1",d:"Friday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Wednesday"}],streets:["Berkshire Pl","Berkshire Place","Lancashire Trail","Manchester Court","Manchester Ct","Westover Ct","Wiltshire Ct","Windham Court","Windsor Tr","Windsor Trail"]},
+  {name:"Four Bridges",area:"W1/W2/W4 cycle",zip:"45044",slots:[{w:"W1",d:"Friday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Wednesday"}],streets:["Alpine Aster Court"]},
+  {name:"Windsor Estates",area:"W1/W2/W4 cycle",zip:"45044",slots:[{w:"W1",d:"Friday"},{w:"W2",d:"Wednesday"},{w:"W3",d:"Wednesday",isQ:true},{w:"W4",d:"Wednesday"}],streets:["Rippling Way  45044","Spencer Terrace"]},
+  {name:"Four Bridges",area:"W1/W4 Mon",zip:"45044",slots:[{w:"W1",d:"Monday"},{w:"W4",d:"Monday"}],streets:["Cherry Laurel Dr","Cherry Laurel Drive","Oleander Court","Oleander Ct."]},
+  {name:"Cedarbrook",area:"W1/W4 Mon",zip:"45044",slots:[{w:"W1",d:"Monday"},{w:"W4",d:"Monday"}],streets:["Airy View Dr."]},
+  {name:"Lanes Landing",area:"W1/W4 Mon",zip:"45044",slots:[{w:"W1",d:"Monday"},{w:"W4",d:"Monday"}],streets:["Autumn Oak Drive"]},
+  {name:"Dutchland Woods",area:"W1/W4 Mon",zip:"45044",slots:[{w:"W1",d:"Monday"},{w:"W4",d:"Monday"}],streets:["Netherlands Dr"]},
+  {name:"Liberty Township",area:"W1/W4 Mon",zip:"45044",slots:[{w:"W1",d:"Monday"},{w:"W4",d:"Monday"}],streets:["Cardnia Ct","Cincinnati Dayton Rd","Old Pebble Path","Sweet Briar Ct","Yankee Rd"]},
+  {name:"Windsor Estates",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Anmer Court","Anmer Ct","Brunswick Court","Kingham Way","Roden Park Dr","Roden Park Drive"]},
+  {name:"Kyles Station Meadows",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Chandler Crossing"]},
+  {name:"Francis Manor",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Francis Drive","Welney Run"]},
+  {name:"Allen Estates",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Justess Lane"]},
+  {name:"Paul Estates",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Paul Lane"]},
+  {name:"Liberty Township",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Taylor Lake Lane","gaspar trail"]},
+  {name:"Middletown",area:"W2 Tue",zip:"45044",slots:[{w:"W2",d:"Tuesday"}],streets:["Diogo Drive","Sandhurst Ct"]},
+  {name:"Monroe",area:"Route 1",zip:"45050",slots:[{w:"W1",d:"Friday"}],streets:["Old Carriage Ct","Old Carriage Court"]},
+  {name:"Monroe Crossings",area:"(Bridgewater Ln area)",zip:"45050",slots:[{w:"W2",d:"Tuesday"}],streets:["Bridgewater Ln","Bridgewater Lane","Ella Court","Morgan Drive","Nicole Court","Ryan Court","Sonya Court"]},
+  {name:"North Bend",area:"Route 4",zip:"45052",slots:[{w:"W4",d:"Tuesday"}],streets:["War Admiral Drive","War Admiral Dr"]},
+  {name:"Stone Brook",area:"(Forest Edge Dr)",zip:"45065",slots:[{w:"W2",d:"Thursday"}],streets:["Creek Park Dr","Forest Edge Drive","Little Turtle Dr","Stone Brook Way"]},
+  {name:"Riverside",area:"(Trovillo Dr)",zip:"45065",slots:[{w:"W2",d:"Thursday"}],streets:["Brant Place","Kibbey Lane","Trovillo Dr"]},
+  {name:"TPC Rivers Bend Vista Pointe",area:"(Meadowview Ln)",zip:"45065",slots:[{w:"W2",d:"Thursday"}],streets:["Chateau Valley Lane","Meadowview Lane"]},
+  {name:"TPC Rivers Bend",area:"(Chateau Valley)",zip:"45065",slots:[{w:"W2",d:"Thursday"}],streets:["Chateau Valley Lane"]},
+  {name:"South Lebanon",area:"Route 2",zip:"45065",slots:[{w:"W2",d:"Thursday"}],streets:["Brant Pl","Brant Place","Buena Vista Drive","Chateau Valley Lane","E. pike St.","Forest Edge Dr","Forest Edge Drive","Grants Frederick","Ilene Avenue","Kelly Ct.","Kelly court","Meadowview Lane","Meadowview Ln","Old Willow Court","Old Willow Ct","Stone Ridge Blvd","Stone Ridge Boulevard","Stoney Path CT","Stoney path court","Trovillo Dr","Vista Ridge Drive","Woodhaven","riverview drive"]},
+  {name:"Beckett Ridge",area:"(Woodthrush Ln area)",zip:"45069",slots:[{w:"W2",d:"Tuesday"}],streets:["Woodthrush Lane","Woodthrush Dr","Birchwood Drive","Murtaugh Lane","San Mateo Drive","Southhampton Lane","Susan Springs Dr","Vantage Ct","Vantage Court"]},
+  {name:"West Chester",area:"Route 2",zip:"45069",slots:[{w:"W2",d:"Tuesday"}],streets:["Allendale Dr","Allendale dr","Brighton Lane","Brighton Lane V","Grinn Drive","Kirkcaldy Dr","Revere Run"]},
+  {name:"Wetherington",area:"(Charter Cup Ln)",zip:"45069",slots:[{w:"W2",d:"Wednesday"}],streets:["Charter Cup Ln","Charter Cup Lane","Wetherington Drive"]},
+  {name:"Reserves of Providence",area:"(Pinnacle Point Dr)",zip:"45069",slots:[{w:"W2",d:"Wednesday"}],streets:["Copper Court","Copper Ct","Desert Springs Court","Pinnacle Point Drive","Shoal Creek Court","Shoal Creek Ct","Weatherby Ct","Whispering Run Court","Wynstone Court","Wynstone Ct"]},
+  {name:"Villages of Providence",area:"(Pinnacle Point Dr)",zip:"45069",slots:[{w:"W2",d:"Wednesday"}],streets:["Copper Court","Copper Ct","Desert Springs Court","Pinnacle Point Drive","Shoal Creek Court","Shoal Creek Ct","Weatherby Ct","Whispering Run Court","Wynstone Court","Wynstone Ct"]},
+  {name:"Beckett Ridge",area:"Q-Route",zip:"45069",slots:[{w:"W1",d:"Friday",isQ:true}],streets:["Taffy Dr","Taffy Drive"]},
+  {name:"Tyler's Reserve",area:"(Tylers Reserve Dr)",zip:"45069",slots:[{w:"W4",d:"Monday"}],streets:["Tylers Reserve Drive","Tylers Reserve Dr"]},
+  {name:"Beckett Ridge",area:"(Foxchase Dr)",zip:"45069",slots:[{w:"W4",d:"Monday"}],streets:["European Jaunt","Foxchase Drive","Guildford Drive","Guildford Dr"]},
+  {name:"West Chester",area:"Route 3",zip:"45069",slots:[{w:"W4",d:"Monday"}],streets:["Chantilly Dr.","Chantilly Drive","Executive Ct","Huntsman Lane","New Castle Drive"]},
+  {name:"Union Park",area:"(Union Park)",zip:"45069",slots:[{w:"W4",d:"Thursday"}],streets:["Union Park"]},
+  {name:"West Chester",area:"Route 4",zip:"45069",slots:[{w:"W4",d:"Thursday"}],streets:["Cedar Falls Lane","Copper Ct","Grace Ct","Secret Creek Ct","Welsford Court","Welsford Ct"]},
+];
+}
+
+// ══════════════════════════════════════════════════════════
+// SCHEDULING ENGINE (from OCC Management System)
+// ══════════════════════════════════════════════════════════
+
+function getToday() {
+  const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+}
+
+function getMondayForWeek(wNum) {
+  const d = new Date(ANCHOR_MONDAY);
+  d.setDate(d.getDate() + (wNum - ANCHOR_W) * 7);
+  return d;
+}
+
+function getNextServiceDate(wNum, dayName, isQ, firstDate) {
+  const today = getToday();
+  const cycleWeeks = isQ ? 12 : 4;
+  let target;
+  if (firstDate) {
+    target = new Date(firstDate + 'T00:00:00');
+  } else {
+    const monday = getMondayForWeek(wNum);
+    target = new Date(monday);
+    target.setDate(target.getDate() + DAY_OFF[dayName]);
+  }
+  while (target < today) target.setDate(target.getDate() + cycleWeeks * 7);
+  return target;
+}
+
+function fmtDate(d) {
+  return `${WDAYS[d.getDay()]}, ${MONTHS_FULL[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function fmtDaysAway(d) {
+  const diff = Math.round((d - getToday()) / 86400000);
+  if (diff === 0) return 'Today!';
+  if (diff === 1) return 'Tomorrow';
+  return `In ${diff} days`;
+}
+
+// ══════════════════════════════════════════════════════════
+// ADDRESS MATCHING (from OCC Management System)
+// ══════════════════════════════════════════════════════════
+
+function normalizeStreet(s) {
+  return s.toLowerCase()
+    .replace(/^\d+(?=\s+\S)/, '')
+    .replace(/,.*$/, '')
+    .replace(/\s+\d{5}(-\d{4})?$/, '')
+    .replace(/\s+(oh|ohio|ky|kentucky|in|indiana)\b.*$/i, '')
+    .replace(/\s+(liberty twp?|hamilton twp?|west chester|mason|loveland|milford|fairfield|maineville|morrow|goshen|amelia|newtown|mariemont|madeira|glendale|silverton|clifton|terrace park|north bend|south lebanon|cincinnati)\b.*$/i, '')
+    .replace(/[.,#]/g, '')
+    .replace(/\bdr\.?\b/g, 'drive').replace(/\bst\.?\b/g, 'street')
+    .replace(/\bave?\.?\b/g, 'avenue').replace(/\bct\.?\b/g, 'court')
+    .replace(/\bln\.?\b/g, 'lane').replace(/\bblvd\.?\b/g, 'boulevard')
+    .replace(/\brd\.?\b/g, 'road').replace(/\btrl?\.?\b/g, 'trail')
+    .replace(/\bpl\.?\b/g, 'place').replace(/\bcir\.?\b/g, 'circle')
+    .replace(/\s+/g, ' ').trim();
+}
+
+function addrTokens(s) {
+  return normalizeStreet(s).split(/\s+/).filter(w => w.length >= 2);
+}
+
+function streetScore(tokens, street) {
+  const norm = normalizeStreet(street);
+  const suffixes = new Set(['court','drive','street','avenue','lane','boulevard','road','trail','place','circle','way','run','ridge','bend','grove','hill','park','lake','creek','terrace']);
+  const keyTokens = tokens.filter(t => !suffixes.has(t));
+  if (keyTokens.length > 0 && !keyTokens.every(t => norm.includes(t))) return 0;
+  let score = 0;
+  for (const t of tokens) {
+    if (norm.includes(t)) score += (t.length >= 5 ? 3 : t.length >= 3 ? 2 : 1);
+  }
+  if (norm.startsWith(tokens.join(' '))) score += 5;
+  return score;
+}
+
+function findMatches(raw) {
+  const tokens = addrTokens(raw);
+  if (tokens.length === 0) return [];
+  const best = {};
+  for (const hood of NEIGHBORHOODS) {
+    let topScore = 0;
+    if (hood.streets && hood.streets.length) {
+      for (const st of hood.streets) {
+        const s = streetScore(tokens, st);
+        if (s > topScore) topScore = s;
+      }
+    }
+    const nameScore = streetScore(tokens, hood.name);
+    if (nameScore > topScore) topScore = nameScore;
+    if (topScore < 2) continue;
+    const dayFp = [...new Set(hood.slots.map(s => s.d))].sort().join(',');
+    const key = hood.zip + '|' + dayFp;
+    if (!best[key] || best[key].score < topScore) {
+      best[key] = { hood, score: topScore };
+    }
+  }
+  return Object.values(best).sort((a,b) => b.score - a.score).slice(0,6).map(x => x.hood);
+}
+
+// ══════════════════════════════════════════════════════════
+// UI LOGIC
+// ══════════════════════════════════════════════════════════
+
+let selectedHood = null;
+let ddIdx = -1;
+
+function onInput(val) {
+  ddIdx = -1;
+  const dd = document.getElementById('dropdown');
+  const trimmed = val.trim();
+  hideResult(); hideDayPicker(); hideError();
+
+  if (trimmed.length < 3) { dd.style.display = 'none'; return; }
+
+  // Direct ZIP entry
+  if (/^\d{5}$/.test(trimmed)) {
+    dd.style.display = 'none';
+    lookupByZip(trimmed);
+    return;
+  }
+  if (/^\d+$/.test(trimmed)) {
+    dd.innerHTML = '<div class="dd-none">Add your street name &mdash; e.g. "' + trimmed + ' Stillwater Dr"</div>';
+    dd.style.display = 'block';
+    return;
+  }
+
+  const matches = findMatches(trimmed);
+  if (!matches.length) {
+    dd.innerHTML = '<div class="dd-none">No matching streets found &mdash; try entering your 5-digit ZIP code</div>';
+    dd.style.display = 'block';
+    return;
+  }
+
+  // Unique ZIPs & day sets
+  const zips = [...new Set(matches.map(h => h.zip))];
+  const daySets = [...new Set(matches.map(h => [...new Set(h.slots.map(s => s.d))].sort().join(',')))];
+
+  if (matches.length === 1 || (zips.length === 1 && daySets.length === 1)) {
+    dd.style.display = 'none';
+    selectHood(matches[0]);
+    return;
+  }
+
+  if (zips.length === 1 && daySets.length > 1) {
+    dd.style.display = 'none';
+    const uniqueDays = [...new Set(matches.flatMap(h => h.slots.map(s => s.d)))];
+    selectedHood = matches[0];
+    showDayPicker(uniqueDays, matches[0].name);
+    return;
+  }
+
+  // Multiple ZIPs — show list
+  dd.innerHTML = matches.map((h, i) => {
+    const zi = ZIP_INFO[h.zip] || {};
+    const city = zi.city || h.zip;
+    const days = [...new Set(h.slots.map(s => s.d))].join(' / ');
+    return `<div class="dd-item" data-idx="${i}" onmousedown="selectMatch(${i})">
+      <div><div class="dd-name">${h.name}</div><div class="dd-sub">${city} &middot; ${days}</div></div>
+      <div class="dd-zip">${h.zip}</div>
+    </div>`;
+  }).join('');
+  dd._matches = matches;
+  dd.style.display = 'block';
+}
+
+function selectMatch(idx) {
+  const dd = document.getElementById('dropdown');
+  const matches = dd._matches;
+  if (matches && matches[idx]) {
+    dd.style.display = 'none';
+    selectHood(matches[idx]);
+  }
+}
+
+function selectHood(h) {
+  selectedHood = h;
+  const uniqueDays = [...new Set(h.slots.map(s => s.d))];
+  if (uniqueDays.length === 1) {
+    showSchedule(h, uniqueDays[0]);
+  } else {
+    showDayPicker(uniqueDays, h.name);
+  }
+}
+
+function lookupByZip(zip) {
+  const slots = SCHEDULE[zip];
+  if (!slots || !slots.length) {
+    showError(`ZIP ${zip} is not in our service area. Call us at (513) 860-2080 for help!`);
+    return;
+  }
+  const uniqueDays = [...new Set(slots.map(s => s.d))];
+  const zi = ZIP_INFO[zip] || {};
+  const label = zi.city ? (zi.hood ? zi.city + ' / ' + zi.hood : zi.city) : zip;
+  if (uniqueDays.length === 1) {
+    selectedHood = null;
+    showScheduleForZip(zip, uniqueDays[0]);
+  } else {
+    selectedHood = null;
+    showDayPicker(uniqueDays, label);
+    // Store zip for later
+    document.getElementById('dayPicker').dataset.zip = zip;
+  }
+}
+
+function showDayPicker(days, label) {
+  const picker = document.getElementById('dayPicker');
+  const dayOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const sorted = days.slice().sort((a,b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
+  document.getElementById('dayPickerLabel').textContent = label + ' has multiple pickup days \u2014 which is yours?';
+  document.getElementById('dayBtns').innerHTML = sorted.map(d =>
+    `<button class="day-btn" onclick="pickDay('${d}')">${d}</button>`
+  ).join('');
+  picker.style.display = 'block';
+}
+
+function pickDay(day) {
+  hideDayPicker();
+  if (selectedHood) {
+    showSchedule(selectedHood, day);
+  } else {
+    const zip = document.getElementById('dayPicker').dataset.zip;
+    if (zip) showScheduleForZip(zip, day);
+  }
+}
+
+function showScheduleForZip(zip, day) {
+  const slots = (SCHEDULE[zip] || []).filter(s => s.d === day);
+  if (!slots.length) { showError(`No ${day} service found for ZIP ${zip}.`); return; }
+  const zi = ZIP_INFO[zip] || {};
+  const label = zi.city ? (zi.hood ? zi.hood + ', ' + zi.city : zi.city) : zip;
+  renderResult(zip, label, null, slots, day);
+}
+
+function showSchedule(hood, day) {
+  const slots = hood.slots.filter(s => s.d === day);
+  if (!slots.length) {
+    // Fallback to ZIP-level slots for that day
+    const zipSlots = (SCHEDULE[hood.zip] || []).filter(s => s.d === day);
+    if (!zipSlots.length) { showError(`No ${day} service found.`); return; }
+    renderResult(hood.zip, hood.name, hood, zipSlots, day);
+    return;
+  }
+  renderResult(hood.zip, hood.name, hood, slots, day);
+}
+
+function renderResult(zip, label, hood, slots, day) {
+  hideError();
+  const zi = ZIP_INFO[zip] || {};
+  const freq = (hood && hood.recycleFreq) || RECYCLE_FREQ[zip] || '';
+
+  // Build all upcoming dates for next 12 weeks
+  const today = getToday();
+  const cutoff = new Date(today); cutoff.setDate(cutoff.getDate() + 84);
+  const allDates = [];
+  const seen = new Set();
+
+  slots.forEach(slot => {
+    const wNum = parseInt(slot.w.replace('W',''));
+    const cycleWeeks = slot.isQ ? 12 : 4;
+    let target = getNextServiceDate(wNum, slot.d, slot.isQ, slot.firstDate);
+    const testBack = new Date(target); testBack.setDate(testBack.getDate() - cycleWeeks * 7);
+    if (testBack >= today) target = testBack;
+    while (target <= cutoff) {
+      if (target >= today) {
+        const key = target.toDateString();
+        if (!seen.has(key)) {
+          seen.add(key);
+          allDates.push({ date: new Date(target), slot });
+        }
+      }
+      target.setDate(target.getDate() + cycleWeeks * 7);
+    }
+  });
+
+  allDates.sort((a,b) => a.date - b.date);
+
+  if (!allDates.length) { showError('No upcoming service dates found.'); return; }
+
+  const next = allDates[0];
+  const diff = Math.round((next.date - today) / 86400000);
+
+  // Recycle badge
+  let recycleBadge = '';
+  if (freq === 'W') {
+    recycleBadge = '<span class="recycle-badge recycle-w">Recycling: Weekly pickup</span>';
+  } else if (freq === 'BW') {
+    recycleBadge = '<span class="recycle-badge recycle-bw">Recycling: Every other week</span>';
+  }
+
+  // Location line
+  let locLine = label;
+  if (zi.city && label !== zi.city && !label.includes(zi.city)) {
+    locLine += ' &middot; ' + zi.city;
+  }
+
+  const resultNext = document.getElementById('resultNext');
+  resultNext.innerHTML = `
+    <div class="hood-line">${locLine} &middot; ${zip}</div>
+    <div style="font-size:13px;color:#065f46;font-weight:600;margin-bottom:2px;">Next ${day} Pickup</div>
+    <div class="date-big">${fmtDate(next.date)}</div>
+    <div class="days-away">${diff === 0 ? '&#x2705; Today!' : diff === 1 ? '&#x1F4C5; Tomorrow' : '&#x1F4C5; ' + fmtDaysAway(next.date)}</div>
+    ${recycleBadge}
+  `;
+
+  // Schedule list (remaining dates)
+  const schedList = document.getElementById('schedList');
+  if (allDates.length > 1) {
+    const rows = allDates.slice(1).map(item => {
+      const d = item.date;
+      const away = Math.round((d - today) / 86400000);
+      const awayClass = away <= 14 ? 'soon' : 'later';
+      return `<div class="sched-row">
+        <div>
+          <div class="sched-date">${MONTHS_FULL[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}</div>
+          <div class="sched-day">${WDAYS[d.getDay()]}</div>
+        </div>
+        <span class="sched-away ${awayClass}">${away} days</span>
+      </div>`;
+    }).join('');
+    schedList.innerHTML = `<h3>Upcoming 12-Week Schedule</h3>${rows}`;
+    schedList.style.display = 'block';
+  } else {
+    schedList.style.display = 'none';
+  }
+
+  document.getElementById('resultBox').classList.add('show');
+}
+
+function onKey(e) {
+  const dd = document.getElementById('dropdown');
+  if (dd.style.display === 'none') return;
+  const items = dd.querySelectorAll('.dd-item');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') {
+    ddIdx = Math.min(ddIdx + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+    e.preventDefault();
+  } else if (e.key === 'ArrowUp') {
+    ddIdx = Math.max(ddIdx - 1, 0);
+    items.forEach((el, i) => el.classList.toggle('active', i === ddIdx));
+    e.preventDefault();
+  } else if (e.key === 'Enter') {
+    if (ddIdx >= 0) selectMatch(ddIdx);
+    else if (items.length === 1) selectMatch(0);
+    e.preventDefault();
+  } else if (e.key === 'Escape') {
+    dd.style.display = 'none';
+  }
+}
+
+document.addEventListener('click', e => {
+  if (!document.querySelector('.input-wrap')?.contains(e.target)) {
+    document.getElementById('dropdown').style.display = 'none';
+  }
+});
+
+function showError(msg) {
+  const eb = document.getElementById('errorBox');
+  eb.textContent = msg;
+  eb.classList.add('show');
+}
+function hideError() { document.getElementById('errorBox').classList.remove('show'); }
+function hideResult() { document.getElementById('resultBox').classList.remove('show'); }
+function hideDayPicker() { document.getElementById('dayPicker').style.display = 'none'; }
+</script>
+</body>
+</html>
