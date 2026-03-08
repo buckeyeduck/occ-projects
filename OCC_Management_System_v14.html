@@ -1554,6 +1554,88 @@
       </div>
     </div>
 
+    <!-- ══════════ CUSTOMER LOOKUP ══════════ -->
+    <div class="card" style="margin-top:16px;">
+      <div class="card-head" style="background:#14532d;color:#fff;cursor:pointer;" onclick="toggleCustLookup()">
+        👤 Customer Lookup
+        <span id="custLookupToggle" style="float:right;font-size:14px;">▾</span>
+      </div>
+      <div class="card-body" id="custLookupBody">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+          <div style="position:relative;flex:1;min-width:220px;">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;">🔍</span>
+            <input type="text" id="custSearchInput" placeholder="Search by name, ZIP, or city..." oninput="custLookupSearch()" style="width:100%;padding:10px 12px 10px 32px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;outline:none;transition:border .15s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <select id="custSearchTier" onchange="custLookupSearch()" style="padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:12px;font-weight:700;">
+            <option value="">All Tiers</option>
+            <option value="M">Monthly</option>
+            <option value="BM">Bi-Monthly</option>
+            <option value="Q">Quarterly</option>
+            <option value="BW">Bi-Weekly</option>
+            <option value="WM">Warm Months</option>
+            <option value="S6">Seasonal 6</option>
+            <option value="S8">Seasonal 8</option>
+          </select>
+          <span id="custSearchCount" style="font-size:12px;color:var(--gray);font-weight:700;margin-left:auto;"></span>
+        </div>
+        <div id="custSearchResults" style="max-height:400px;overflow-y:auto;"></div>
+        <div id="custDetailPanel" style="display:none;margin-top:14px;padding:16px;background:var(--blue-xlight);border:2px solid var(--blue);border-radius:12px;"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ NEW ORDER CALCULATOR ══════════ -->
+    <div class="card" style="margin-top:16px;">
+      <div class="card-head" style="background:#b71c1c;color:#fff;cursor:pointer;" onclick="toggleNewOrder()">
+        🛒 New Order — Quick Price Quote
+        <span id="newOrderToggle" style="float:right;font-size:14px;">▾</span>
+      </div>
+      <div class="card-body" id="newOrderBody">
+        <div style="font-size:12px;color:#888;margin-bottom:14px;">2026 pricing for new customers. Select options below for an instant price quote.</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div class="input-group" style="flex:1;min-width:140px;">
+            <div class="lbl">Number of Cans</div>
+            <select id="noCanCount" onchange="calcNewOrder()" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;">
+              <option value="1">1 Can</option>
+              <option value="2" selected>2 Cans</option>
+              <option value="3">3 Cans</option>
+              <option value="4">4 Cans</option>
+              <option value="5">5 Cans</option>
+              <option value="6">6 Cans</option>
+              <option value="7">7 Cans</option>
+              <option value="8">8 Cans</option>
+            </select>
+          </div>
+          <div class="input-group" style="flex:1;min-width:140px;">
+            <div class="lbl">Service Plan</div>
+            <select id="noPlan" onchange="calcNewOrder()" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;">
+              <option value="BW">Bi-Weekly (26x/yr)</option>
+              <option value="M" selected>Monthly (12x/yr)</option>
+              <option value="S8">Seasonal 8 (8x/yr)</option>
+              <option value="BM">Bi-Monthly (6x/yr)</option>
+              <option value="WM">Warm Months (6x/yr)</option>
+              <option value="S6">Seasonal 6 (6x/yr)</option>
+              <option value="Q">Quarterly (4x/yr)</option>
+              <option value="SU4">Summer 4 (4x/yr)</option>
+              <option value="SU3">Summer 3 (3x/yr)</option>
+              <option value="P3">Pick 3x/yr</option>
+              <option value="A1">Annual (1x/yr)</option>
+              <option value="AP">Annual Prepaid (13 cleans)</option>
+            </select>
+          </div>
+          <div class="input-group" style="flex:1;min-width:140px;">
+            <div class="lbl">Customer ZIP</div>
+            <input type="text" id="noZip" placeholder="45208" maxlength="5" oninput="this.value=this.value.replace(/\D/g,''); calcNewOrder();" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;">
+          </div>
+        </div>
+
+        <!-- Price Result -->
+        <div id="noResult" style="display:none;"></div>
+
+        <!-- Service Area Check -->
+        <div id="noServiceArea" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+
     <!-- REFERENCE TABLE -->
     <div class="card-inner">
       <div class="card-body" style="padding:18px;">
@@ -4649,6 +4731,256 @@ function renderOverrideResult(zip, day, recycle, ovDate, note) {
     rVal.innerHTML = `<div class="r-cell-value muted">Not entered</div>`;
   }
 }
+
+// ── CUSTOMER LOOKUP ─────────────────────────────────────
+function toggleCustLookup() {
+  const body = document.getElementById('custLookupBody');
+  const tog  = document.getElementById('custLookupToggle');
+  if (body.style.display === 'none') { body.style.display = ''; tog.textContent = '▾'; }
+  else { body.style.display = 'none'; tog.textContent = '▸'; }
+}
+
+function custLookupSearch() {
+  const raw  = (document.getElementById('custSearchInput').value || '').trim().toLowerCase();
+  const tier = document.getElementById('custSearchTier').value;
+  const cnt  = document.getElementById('custSearchCount');
+  const wrap = document.getElementById('custSearchResults');
+  const detail = document.getElementById('custDetailPanel');
+  detail.style.display = 'none';
+
+  if (raw.length < 2 && !tier) { wrap.innerHTML = '<div style="color:#aaa;font-size:12px;text-align:center;padding:20px;">Type at least 2 characters to search...</div>'; cnt.textContent = ''; return; }
+
+  let results = CUST_PROFIT.filter(c => {
+    if (tier && c.t !== tier) return false;
+    if (!raw) return true;
+    const hay = (c.n + ' ' + c.z + ' ' + (c.city||'')).toLowerCase();
+    return raw.split(/\s+/).every(tok => hay.includes(tok));
+  });
+
+  results.sort((a,b) => b.ann - a.ann);
+  const show = results.slice(0, 50);
+  cnt.textContent = results.length + ' customer' + (results.length !== 1 ? 's' : '') + (results.length > 50 ? ' (showing first 50)' : '');
+
+  if (!show.length) { wrap.innerHTML = '<div style="color:#aaa;font-size:12px;text-align:center;padding:20px;">No customers found.</div>'; return; }
+
+  wrap.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
+    '<thead><tr style="background:#f0f2f8;position:sticky;top:0;z-index:2;">' +
+    '<th style="padding:7px 10px;text-align:left;">Customer</th>' +
+    '<th style="padding:7px 8px;text-align:center;">Tier</th>' +
+    '<th style="padding:7px 8px;text-align:center;">Cans</th>' +
+    '<th style="padding:7px 8px;text-align:right;">Annual $</th>' +
+    '<th style="padding:7px 8px;text-align:left;">ZIP / City</th>' +
+    '</tr></thead><tbody>' +
+    show.map((c, i) => {
+      const tc = c.t==='M'?'#14532d':c.t==='Q'?'#92400e':c.t==='BM'?'#1e3a8a':'#4b5563';
+      const tl = TIER_LABELS[c.t]||c.t;
+      return `<tr style="cursor:pointer;border-bottom:1px solid #eee;" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background=''" onclick="showCustDetail(${i})">` +
+        `<td style="padding:6px 10px;font-weight:600;">${c.n}</td>` +
+        `<td style="padding:6px 8px;text-align:center;"><span style="background:${tc};color:#fff;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;">${tl}</span></td>` +
+        `<td style="padding:6px 8px;text-align:center;font-weight:700;">${c.c}</td>` +
+        `<td style="padding:6px 8px;text-align:right;font-weight:700;color:#14532d;">$${c.ann.toLocaleString()}</td>` +
+        `<td style="padding:6px 8px;font-size:11px;color:#666;">${c.z} · ${c.city||''}</td>` +
+        '</tr>';
+    }).join('') + '</tbody></table>';
+
+  // Stash for detail view
+  wrap._results = show;
+}
+
+function showCustDetail(idx) {
+  const wrap = document.getElementById('custSearchResults');
+  const c = wrap._results && wrap._results[idx];
+  if (!c) return;
+
+  const panel = document.getElementById('custDetailPanel');
+  const tc = c.t==='M'?'#14532d':c.t==='Q'?'#92400e':c.t==='BM'?'#1e3a8a':'#4b5563';
+  const tl = TIER_LABELS[c.t]||c.t;
+
+  // Check if this ZIP is in service area
+  const inService = !!(SCHEDULE[c.z] && SCHEDULE[c.z].length);
+  const zipInfo = ZIP_INFO[c.z] || {};
+
+  // Find next service date for this customer
+  let nextDateHtml = '';
+  if (inService) {
+    const slots = SCHEDULE[c.z] || [];
+    const upcoming = slots.map(slot => ({
+      date: getNextServiceDate(parseInt(slot.w.replace('W','')), slot.d, slot.isQ, slot.firstDate),
+      slot
+    })).sort((a,b) => a.date - b.date);
+    if (upcoming.length) {
+      nextDateHtml = `<div style="margin-top:10px;padding:10px 14px;background:#fff;border:1.5px solid var(--green);border-radius:10px;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--green);margin-bottom:4px;">Next Service Dates for ZIP ${c.z}</div>
+        ${upcoming.slice(0,3).map(u => {
+          const da = Math.round((u.date - getToday()) / 86400000);
+          const away = da === 0 ? 'Today' : da === 1 ? 'Tomorrow' : da + 'd away';
+          return `<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;">
+            <span style="font-weight:800;color:var(--blue);">${fmtDate(u.date)}</span>
+            <span style="color:#888;">${u.slot.d}</span>
+            <span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--lgray);color:#666;">${away}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }
+  }
+
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <div>
+        <div style="font-size:18px;font-weight:900;color:var(--navy);">${c.n}</div>
+        <div style="font-size:12px;color:#888;">${c.city || ''} · ZIP ${c.z}${zipInfo.hood ? ' · '+zipInfo.hood : ''}</div>
+      </div>
+      <button onclick="document.getElementById('custDetailPanel').style.display='none'" style="background:none;border:2px solid var(--border);border-radius:8px;padding:4px 12px;cursor:pointer;font-size:12px;font-weight:700;color:#888;">✕ Close</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <div style="background:#fff;border-radius:10px;padding:10px 16px;border:1.5px solid var(--border);flex:1;min-width:100px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;">Service Tier</div>
+        <div style="margin-top:4px;"><span style="background:${tc};color:#fff;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">${tl}</span></div>
+      </div>
+      <div style="background:#fff;border-radius:10px;padding:10px 16px;border:1.5px solid var(--border);flex:1;min-width:100px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;">Cans</div>
+        <div style="font-size:22px;font-weight:900;color:var(--navy);">${c.c}</div>
+      </div>
+      <div style="background:#fff;border-radius:10px;padding:10px 16px;border:1.5px solid var(--border);flex:1;min-width:100px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;">Avg/Visit</div>
+        <div style="font-size:22px;font-weight:900;color:var(--blue);">$${c.avg.toFixed(0)}</div>
+      </div>
+      <div style="background:#fff;border-radius:10px;padding:10px 16px;border:1.5px solid var(--border);flex:1;min-width:100px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;">Annual Value</div>
+        <div style="font-size:22px;font-weight:900;color:#14532d;">$${c.ann.toLocaleString()}</div>
+      </div>
+      <div style="background:#fff;border-radius:10px;padding:10px 16px;border:1.5px solid var(--border);flex:1;min-width:100px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#888;">Jobs/Year</div>
+        <div style="font-size:22px;font-weight:900;color:var(--navy);">${c.j}</div>
+      </div>
+    </div>
+    ${nextDateHtml}
+  `;
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── NEW ORDER CALCULATOR ────────────────────────────────
+function toggleNewOrder() {
+  const body = document.getElementById('newOrderBody');
+  const tog  = document.getElementById('newOrderToggle');
+  if (body.style.display === 'none') { body.style.display = ''; tog.textContent = '▾'; }
+  else { body.style.display = 'none'; tog.textContent = '▸'; }
+}
+
+// 2026 pricing matrix: PRICING[cans][plan] = per-cleaning price
+const PRICING = {
+  1: {BW:25,M:25,S8:30,BM:30,WM:32,S6:32,Q:35,SU4:45,SU3:50,P3:50,A1:65,AP:300},
+  2: {BW:30,M:30,S8:36,BM:36,WM:38,S6:38,Q:42,SU4:50,SU3:55,P3:55,A1:65,AP:360},
+  3: {BW:40,M:40,S8:46,BM:48,WM:48,S6:48,Q:55,SU4:60,SU3:65,P3:70,A1:80,AP:480},
+  4: {BW:50,M:50,S8:56,BM:60,WM:58,S6:58,Q:68,SU4:70,SU3:75,P3:85,A1:95,AP:600},
+  5: {BW:60,M:60,S8:66,BM:72,WM:68,S6:68,Q:81,SU4:80,SU3:85,P3:100,A1:110,AP:720},
+  6: {BW:70,M:70,S8:76,BM:84,WM:78,S6:78,Q:94,SU4:90,SU3:95,P3:115,A1:125,AP:840},
+  7: {BW:80,M:80,S8:86,BM:96,WM:88,S6:88,Q:107,SU4:100,SU3:105,P3:130,A1:140,AP:960},
+  8: {BW:90,M:90,S8:96,BM:108,WM:98,S6:98,Q:120,SU4:110,SU3:115,P3:145,A1:155,AP:1080}
+};
+
+const PLAN_INFO = {
+  BW: {label:'Bi-Weekly',freq:26},
+  M:  {label:'Monthly',freq:12},
+  S8: {label:'Seasonal 8',freq:8},
+  BM: {label:'Bi-Monthly',freq:6},
+  WM: {label:'Warm Months',freq:6},
+  S6: {label:'Seasonal 6',freq:6},
+  Q:  {label:'Quarterly',freq:4},
+  SU4:{label:'Summer 4',freq:4},
+  SU3:{label:'Summer 3',freq:3},
+  P3: {label:'Pick 3x/yr',freq:3},
+  A1: {label:'Annual',freq:1},
+  AP: {label:'Annual Prepaid',freq:13}
+};
+
+function calcNewOrder() {
+  const cans = parseInt(document.getElementById('noCanCount').value) || 2;
+  const plan = document.getElementById('noPlan').value;
+  const zip  = document.getElementById('noZip').value.trim();
+  const res  = document.getElementById('noResult');
+  const area = document.getElementById('noServiceArea');
+
+  const price = PRICING[cans] && PRICING[cans][plan];
+  if (!price) { res.style.display = 'none'; area.style.display = 'none'; return; }
+
+  const info = PLAN_INFO[plan] || {};
+  const isAP = plan === 'AP';
+  const perClean = isAP ? (price / 13) : price;
+  const annTotal = isAP ? price : (price * info.freq);
+
+  // Compare to monthly as baseline
+  const moPrice = PRICING[cans] && PRICING[cans].M;
+  const moAnn   = moPrice ? moPrice * 12 : 0;
+  let compHtml = '';
+  if (plan !== 'M' && moAnn > 0) {
+    const diff = annTotal - moAnn;
+    const pct  = ((diff / moAnn) * 100).toFixed(0);
+    const savColor = diff < 0 ? '#14532d' : '#c62828';
+    const savLabel = diff < 0 ? 'saves' : 'more than';
+    compHtml = `<div style="font-size:11px;color:${savColor};font-weight:700;margin-top:4px;">${diff < 0 ? '↓' : '↑'} $${Math.abs(diff).toLocaleString()}/yr ${savLabel} Monthly (${pct > 0 ? '+' : ''}${pct}%)</div>`;
+  }
+
+  // Annual Prepaid upsell
+  let apHtml = '';
+  if (!isAP && plan === 'M') {
+    const apPrice = PRICING[cans].AP;
+    const apSave  = moAnn - apPrice;
+    if (apSave > 0) {
+      apHtml = `<div style="margin-top:10px;padding:10px 14px;background:#fff8e1;border:2px solid #f9a825;border-radius:10px;">
+        <div style="font-size:11px;font-weight:800;color:#b71c1c;">★ ANNUAL PREPAID OPTION: $${apPrice.toLocaleString()} for 13 cleanings — saves $${apSave}/yr vs Monthly!</div>
+      </div>`;
+    }
+  }
+
+  res.innerHTML = `
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:160px;background:#f0fdf4;border:2px solid #16a34a;border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#16a34a;margin-bottom:6px;">Per Cleaning</div>
+        <div style="font-size:32px;font-weight:900;color:#14532d;">$${perClean.toFixed(perClean % 1 === 0 ? 0 : 2)}</div>
+        <div style="font-size:11px;color:#888;">${cans} can${cans>1?'s':''} · ${info.label}</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:var(--blue-xlight);border:2px solid var(--blue);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">Annual Total</div>
+        <div style="font-size:32px;font-weight:900;color:var(--navy);">$${annTotal.toLocaleString()}</div>
+        <div style="font-size:11px;color:#888;">${isAP ? '13 cleanings/yr (12+1 FREE)' : info.freq + ' cleanings/yr'}</div>
+        ${compHtml}
+      </div>
+      <div style="flex:1;min-width:160px;background:#fff;border:2px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px;">Monthly Equiv.</div>
+        <div style="font-size:32px;font-weight:900;color:var(--text);">$${(annTotal/12).toFixed(2)}</div>
+        <div style="font-size:11px;color:#888;">avg per month</div>
+      </div>
+    </div>
+    ${apHtml}
+  `;
+  res.style.display = 'block';
+
+  // Service area check
+  if (zip && zip.length === 5) {
+    const inService = SCHEDULE[zip] && SCHEDULE[zip].length;
+    const zi = ZIP_INFO[zip] || {};
+    if (inService) {
+      const days = [...new Set(SCHEDULE[zip].map(s => s.d))].sort((a,b) => ['Monday','Tuesday','Wednesday','Thursday','Friday'].indexOf(a) - ['Monday','Tuesday','Wednesday','Thursday','Friday'].indexOf(b));
+      area.innerHTML = `<div style="padding:12px 16px;background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;">
+        <div style="font-size:12px;font-weight:800;color:#14532d;">✅ ZIP ${zip} is in our service area${zi.city ? ' ('+zi.city+')' : ''}</div>
+        <div style="font-size:11px;color:#666;margin-top:4px;">Service days: <strong>${days.join(', ')}</strong></div>
+      </div>`;
+    } else {
+      area.innerHTML = `<div style="padding:12px 16px;background:var(--red-light);border:2px solid var(--red);border-radius:10px;">
+        <div style="font-size:12px;font-weight:800;color:var(--red);">⚠️ ZIP ${zip} is not currently in our service area</div>
+        <div style="font-size:11px;color:#666;margin-top:4px;">Off-schedule rates may apply. Contact manager for availability.</div>
+      </div>`;
+    }
+    area.style.display = 'block';
+  } else {
+    area.style.display = 'none';
+  }
+}
+
+// Initialize new order calculator on load
+document.addEventListener('DOMContentLoaded', function() { calcNewOrder(); });
 
 // ── ROUTE MANAGER ───────────────────────────────────────
 function loadRoutes() {
