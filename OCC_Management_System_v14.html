@@ -1083,6 +1083,46 @@
 
 
   <!-- ======== TAB: DASHBOARD ======== -->
+  <div class="tab-panel" id="tab-dashboard">
+    <div class="tab-close-bar"><button class="tab-close-btn" onclick="closeTab()">&#10005; Close tab</button></div>
+    <div class="page-title">Dashboard (Admin Only)</div>
+
+    <!-- KPI Cards Row -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;">
+      <div style="background:#eff6ff;border:2px solid #1e40af40;border-radius:12px;padding:14px 18px;">
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#1e40af;">Total Customers</div>
+        <div id="dashCustCount" style="font-size:28px;font-weight:900;color:#1e40af;">—</div>
+      </div>
+      <div style="background:#fef3c7;border:2px solid #f59e0b40;border-radius:12px;padding:14px 18px;">
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#92400e;">Renew Now</div>
+        <div id="dashRenewNowCount" style="font-size:28px;font-weight:900;color:#92400e;">—</div>
+        <div style="font-size:10px;color:#78350f;">prepaid customers at 0–1 jobs left</div>
+      </div>
+      <div style="background:#fefce8;border:2px solid #ca8a0440;border-radius:12px;padding:14px 18px;">
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#ca8a04;">Renew Soon</div>
+        <div id="dashRenewSoonCount" style="font-size:28px;font-weight:900;color:#ca8a04;">—</div>
+        <div style="font-size:10px;color:#a16207;">prepaid customers at 2–3 jobs left</div>
+      </div>
+      <div style="background:#f0fdf4;border:2px solid #16a34a40;border-radius:12px;padding:14px 18px;">
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#15803d;">Renewal Revenue</div>
+        <div id="dashRenewTotalRev" style="font-size:28px;font-weight:900;color:#15803d;">—</div>
+      </div>
+      <div style="background:#faf5ff;border:2px solid #7c3aed40;border-radius:12px;padding:14px 18px;">
+        <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;">Prepaid Customers</div>
+        <div id="dashRenewTotalCount" style="font-size:28px;font-weight:900;color:#7c3aed;">—</div>
+      </div>
+    </div>
+
+    <!-- Route Health Cards -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-head blue" style="background:#0a2e7a;">&#128202; Route Performance Overview</div>
+      <div class="card-body">
+        <div id="dashRouteCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TAB: FINANCIALS ======== -->
   <div class="tab-panel" id="tab-financials">
     <div class="tab-close-bar"><button class="tab-close-btn" onclick="closeTab()">&#10005; Close tab</button></div>
     <div class="page-title">Financial Performance (Admin Only)</div>
@@ -4693,7 +4733,7 @@ function editRoute(zip, week, day) {
   document.getElementById('rmWeek').value = r.week;
   document.getElementById('rmDay').value  = r.day;
   document.getElementById('rmType').value = r.type;
-  switchTab('routes', document.querySelectorAll('.tab-btn')[1]);
+  switchTab('operations', document.querySelector('button[onclick*="operations"]'));
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -6530,7 +6570,7 @@ function renderRouteHealthDashCards() {
   elDashRoute.innerHTML = ROUTE_TOTALS_DATA.map(r => {
     const c  = RH_COLORS[r.route] || '#333';
     const mc = rhMarginColor(r.margin);
-    return `<div onclick="switchTab('routes', document.querySelectorAll('.tab-btn')[2])" style="background:#fff;border:2px solid ${c}25;border-radius:12px;padding:14px;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 16px ${c}30'" onmouseout="this.style.boxShadow=''">
+    return `<div onclick="switchTab('operations', document.querySelector('button[onclick*=\\'operations\\']'))" style="background:#fff;border:2px solid ${c}25;border-radius:12px;padding:14px;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 16px ${c}30'" onmouseout="this.style.boxShadow=''">
       <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:${c};margin-bottom:4px;">${r.route}</div>
       <div style="font-size:26px;font-weight:900;color:${mc};line-height:1;">${r.margin}%</div>
       <div style="font-size:11px;color:#6b7280;margin-bottom:6px;">$${Math.round(r.profit/1000)}K profit/yr &middot; ${r.custs} customers</div>
