@@ -10,12 +10,9 @@
 :root{
   --bg:#0e0f0e;--surface:#161917;--border:#2a2e2b;--border-light:#333836;
   --accent:#4ade80;--accent-dim:#1a3d25;--accent-text:#86efac;
-  --red:#f87171;--red-dim:#3d1a1a;
-  --amber:#fbbf24;--amber-dim:#3d2e0a;
-  --blue:#60a5fa;--blue-dim:#1a2a3d;
-  --purple:#c084fc;--purple-dim:#2d1a3d;
-  --teal:#2dd4bf;--teal-dim:#0d2e2a;
-  --orange:#fb923c;--orange-dim:#3d1f0a;
+  --red:#f87171;--red-dim:#3d1a1a;--amber:#fbbf24;--amber-dim:#3d2e0a;
+  --blue:#60a5fa;--blue-dim:#1a2a3d;--purple:#c084fc;--purple-dim:#2d1a3d;
+  --teal:#2dd4bf;--teal-dim:#0d2e2a;--orange:#fb923c;--orange-dim:#3d1f0a;
   --text:#e2e8e4;--text-dim:#6b7a6e;--text-mid:#9aaa9e;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
@@ -25,24 +22,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .logo{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;}
 .logo-sep{color:var(--border-light);margin:0 6px;}
 .header-title{font-family:var(--mono);font-size:12px;color:var(--text-dim);}
+.nav-tabs{display:flex;gap:2px;}
+.nav-tab{font-family:var(--mono);font-size:11px;padding:5px 14px;cursor:pointer;color:var(--text-dim);border:1px solid transparent;border-radius:4px;background:none;transition:all .15s;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent);border-color:var(--border);background:var(--surface);}
 .status-dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);display:inline-block;margin-right:6px;transition:background .3s;}
 .status-dot.on{background:var(--accent);box-shadow:0 0 6px var(--accent);}
 .status-dot.err{background:var(--red);}
 .status-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
-
-/* LOGIN */
 .login-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 49px);}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:40px 48px;text-align:center;max-width:360px;width:100%;}
 .login-box h2{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.1em;margin-bottom:8px;}
 .login-box p{font-size:12px;color:var(--text-dim);margin-bottom:24px;line-height:1.6;}
 .btn-signin{background:var(--accent);color:#0e0f0e;border:none;border-radius:4px;padding:10px 0;font-family:var(--mono);font-size:12px;font-weight:600;cursor:pointer;width:100%;transition:background .15s;}
 .btn-signin:hover{background:#86efac;}
+.page{display:none;height:calc(100vh - 49px);}
+.page.visible{display:flex;}
 
-/* APP */
-.app{display:none;}
-.app.visible{display:flex;height:calc(100vh - 49px);}
-
-/* SIDEBAR */
+/* INBOX PAGE */
 .sidebar{width:220px;min-width:220px;border-right:1px solid var(--border);padding:16px 14px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
 .section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
 .user-label{font-family:var(--mono);font-size:11px;color:var(--accent-text);margin-bottom:4px;word-break:break-all;}
@@ -53,38 +50,32 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .btn-danger{background:var(--red-dim);color:var(--red);border:1px solid #5a2222;}
 .btn-danger:hover{background:#4a1a1a;}
 .btn-danger:disabled{opacity:.4;cursor:not-allowed;}
-.btn-fwd-occ{background:var(--blue-dim);color:var(--blue);border:1px solid #1e3a5a;}
-.btn-fwd-occ:hover{background:#162d4a;}
-.btn-fwd-occ:disabled{opacity:.4;cursor:not-allowed;}
-.btn-fwd-personal{background:var(--purple-dim);color:var(--purple);border:1px solid #3d1a5a;}
-.btn-fwd-personal:hover{background:#261445;}
-.btn-fwd-personal:disabled{opacity:.4;cursor:not-allowed;}
+.btn-fwd{background:var(--blue-dim);color:var(--blue);border:1px solid #1e3a5a;}
+.btn-fwd:hover{background:#162d4a;}
+.btn-fwd:disabled{opacity:.4;cursor:not-allowed;}
+.btn-fwd-p{background:var(--purple-dim);color:var(--purple);border:1px solid #3d1a5a;}
+.btn-fwd-p:hover{background:#261445;}
+.btn-fwd-p:disabled{opacity:.4;cursor:not-allowed;}
 .btn-signout{background:transparent;color:var(--text-dim);border:1px solid var(--border);font-size:10px;}
-.btn-signout:hover{color:var(--text);}
 .intuit-addr{font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-top:3px;word-break:break-all;}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
 .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:7px 8px;}
 .stat-n{font-family:var(--mono);font-size:18px;font-weight:600;line-height:1;}
 .stat-l{font-size:10px;color:var(--text-dim);margin-top:2px;font-family:var(--mono);}
 .n-red{color:var(--red);}.n-green{color:var(--accent);}.n-amber{color:var(--amber);}.n-blue{color:var(--blue);}.n-purple{color:var(--purple);}.n-teal{color:var(--teal);}.n-orange{color:var(--orange);}
-
-/* CONTENT */
 .content{flex:1;overflow-y:auto;padding:16px 20px;}
 .log-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--text-mid);max-height:90px;overflow-y:auto;margin-bottom:16px;line-height:1.7;}
 .log-line{display:block;}.log-line.ok{color:var(--accent-text);}.log-line.err{color:var(--red);}.log-line.info{color:var(--text-mid);}.log-line.warn{color:var(--amber);}
 .tab-bar{display:flex;gap:2px;margin-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .tab{font-family:var(--mono);font-size:11px;padding:5px 12px 7px;cursor:pointer;color:var(--text-dim);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;}
-.tab:hover{color:var(--text);}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover{color:var(--text);}.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .tab-count{font-size:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0 5px;margin-left:4px;color:var(--text-dim);}
-
-/* TABLE */
 .email-table{width:100%;border-collapse:collapse;}
 .email-table th{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;text-align:left;border-bottom:1px solid var(--border);}
 .email-table td{padding:6px 8px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
 .email-table tr:hover td{background:var(--surface);}
-.from-cell{font-weight:500;color:var(--text);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.subj-cell{color:var(--text-mid);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.from-cell{font-weight:500;color:var(--text);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.subj-cell{color:var(--text-mid);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .date-cell{font-family:var(--mono);font-size:10px;color:var(--text-dim);white-space:nowrap;}
 .badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px;white-space:nowrap;}
 .b-trash{background:var(--red-dim);color:var(--red);}
@@ -92,32 +83,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 .b-personal{background:var(--purple-dim);color:var(--purple);}
 .b-hacjac{background:var(--orange-dim);color:var(--orange);}
 .b-customer{background:var(--teal-dim);color:var(--teal);}
+.b-orders{background:#0d2e2a;color:#2dd4bf;}
 .b-expense{background:var(--blue-dim);color:#93c5fd;}
 .b-review{background:var(--amber-dim);color:var(--amber);}
-
-/* TRIAGE BUTTONS */
 .triage-btns{display:flex;gap:3px;white-space:nowrap;}
-.tb{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 7px;border-radius:3px;cursor:pointer;border:none;transition:all .12s;}
-.tb:disabled{opacity:.3;cursor:not-allowed;}
+.tb{font-family:var(--mono);font-size:10px;font-weight:600;padding:3px 6px;border-radius:3px;cursor:pointer;border:none;transition:all .12s;}
 .tb-occ{background:var(--accent-dim);color:var(--accent-text);border:1px solid #2a5c3a;}
-.tb-occ:hover{background:#1f4a2e;}
 .tb-personal{background:var(--purple-dim);color:var(--purple);border:1px solid #3d1a5a;}
-.tb-personal:hover{background:#261445;}
 .tb-hacjac{background:var(--orange-dim);color:var(--orange);border:1px solid #5a2e0a;}
-.tb-hacjac:hover{background:#2e1405;}
-.tb-trash{background:var(--red-dim);color:var(--red);border:1px solid #5a2222;}
-.tb-trash:hover{background:#4a1a1a;}
 .tb-customer{background:var(--teal-dim);color:var(--teal);border:1px solid #0d4a42;}
-.tb-customer:hover{background:#0a3530;}
-
+.tb-orders{background:#0d2e2a;color:#2dd4bf;border:1px solid #0d4a42;}
+.tb-trash{background:var(--red-dim);color:var(--red);border:1px solid #5a2222;}
 .cb{cursor:pointer;width:14px;height:14px;accent-color:var(--accent);}
-.action-bar{display:flex;gap:8px;margin-bottom:12px;align-items:center;}
-.action-bar .btn{width:auto;padding:5px 12px;}
 .select-all-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-left:auto;cursor:pointer;}
 .select-all-label input{margin-right:5px;accent-color:var(--accent);}
 .empty{color:var(--text-dim);font-family:var(--mono);font-size:12px;padding:20px 0;text-align:center;}
 .spinner{display:inline-block;width:10px;height:10px;border:2px solid var(--border-light);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* RULES PAGE */
+.rules-page{flex:1;overflow-y:auto;padding:24px;}
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px;}
+.rule-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.rule-card-title{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-mid);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.rule-card-title span{font-size:10px;color:var(--text-dim);font-weight:400;}
+.rule-list{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;margin-bottom:10px;}
+.rule-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:4px 8px;font-family:var(--mono);font-size:11px;color:var(--text-mid);}
+.rule-del{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;}
+.rule-del:hover{color:var(--red);}
+.rule-add{display:flex;gap:6px;margin-top:6px;}
+.rule-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:5px 8px;font-family:var(--mono);font-size:11px;color:var(--text);outline:none;}
+.rule-input:focus{border-color:var(--accent);}
+.rule-add-btn{background:var(--accent-dim);color:var(--accent-text);border:1px solid #2a5c3a;border-radius:3px;padding:5px 10px;font-family:var(--mono);font-size:11px;cursor:pointer;white-space:nowrap;}
+.rule-add-btn:hover{background:#1f4a2e;}
+.rules-save-banner{background:var(--accent-dim);border:1px solid #2a5c3a;border-radius:6px;padding:10px 16px;font-family:var(--mono);font-size:11px;color:var(--accent-text);margin-bottom:16px;display:none;}
 </style>
 </head>
 <body>
@@ -125,18 +124,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   <div style="display:flex;align-items:center;gap:8px;">
     <span class="logo">OCC</span><span class="logo-sep">/</span><span class="header-title">INBOX MANAGER</span>
   </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="navInbox" onclick="switchPage('inbox')">INBOX</button>
+    <button class="nav-tab" id="navRules" onclick="switchPage('rules')">RULES</button>
+  </div>
   <div><span class="status-dot" id="statusDot"></span><span class="status-label" id="statusLabel">not signed in</span></div>
 </div>
 
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <h2>OCC INBOX MANAGER</h2>
-    <p>Sign in with <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2daddc5d3c0d6f2dddadbddd1ded7d3dcd1d3dcc19cd1dddf">[email&#160;protected]</a> to manage your inbox.</p>
+    <p>Sign in with howard@ohiocleancans.com to manage your inbox.</p>
     <button class="btn-signin" onclick="signIn()">Sign in with Microsoft</button>
   </div>
 </div>
 
-<div class="app" id="appScreen">
+<!-- INBOX PAGE -->
+<div class="page" id="inboxPage">
   <div class="sidebar">
     <div>
       <div class="section-label">Account</div>
@@ -147,26 +151,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
     <div>
       <div class="section-label">Bulk Actions</div>
       <button class="btn btn-danger" id="deleteBtn" onclick="trashSelected()" disabled>⌫ TRASH SELECTED</button>
-      <button class="btn btn-fwd-occ" id="forwardOccBtn" onclick="forwardExpenses('occ')" disabled>↗ FWD OCC EXPENSES</button>
-      <div class="intuit-addr"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f20272620102c232a2e21102c2e213c1023232c642a373f2a213c2a3c0f2e3c3c263c3b6126213b3a263b612c2022">[email&#160;protected]</a></div>
-      <button class="btn btn-fwd-personal" id="forwardPersonalBtn" onclick="forwardExpenses('personal')" disabled>↗ FWD PERSONAL EXPENSES</button>
-      <div class="intuit-addr"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0f676e6c656e6c506c6e7f667b6e635063636c246a777f6a617c6a7c4f6e7c7c667c7b2166617b7a667b216c6062">[email&#160;protected]</a></div>
+      <button class="btn btn-fwd" id="forwardOccBtn" onclick="forwardExpenses('occ')" disabled>↗ FWD OCC EXPENSES</button>
+      <div class="intuit-addr">ohio_clean_cans_llc+expenses@assist.intuit.com</div>
+      <button class="btn btn-fwd-p" id="forwardPersonalBtn" onclick="forwardExpenses('personal')" disabled>↗ FWD PERSONAL EXPENSES</button>
+      <div class="intuit-addr">hacjac_capital_llc+expenses@assist.intuit.com</div>
     </div>
     <div>
       <div class="section-label">Summary</div>
       <div class="stats-grid">
+        <div class="stat-box"><div class="stat-n n-amber" id="sReview">0</div><div class="stat-l">review</div></div>
         <div class="stat-box"><div class="stat-n n-red" id="sTrash">0</div><div class="stat-l">trash</div></div>
         <div class="stat-box"><div class="stat-n n-green" id="sOcc">0</div><div class="stat-l">occ</div></div>
         <div class="stat-box"><div class="stat-n n-purple" id="sPersonal">0</div><div class="stat-l">personal</div></div>
         <div class="stat-box"><div class="stat-n n-orange" id="sHacjac">0</div><div class="stat-l">hacjac</div></div>
         <div class="stat-box"><div class="stat-n n-teal" id="sCustomer">0</div><div class="stat-l">customer</div></div>
-        <div class="stat-box"><div class="stat-n n-green" id="sOrders">0</div><div class="stat-l">orders</div></div>
+        <div class="stat-box"><div class="stat-n n-teal" id="sOrders">0</div><div class="stat-l">orders</div></div>
         <div class="stat-box"><div class="stat-n n-blue" id="sExpense">0</div><div class="stat-l">expense</div></div>
-        <div class="stat-box"><div class="stat-n n-amber" id="sReview">0</div><div class="stat-l">review</div></div>
       </div>
     </div>
   </div>
-
   <div class="content">
     <div class="log-panel" id="logPanel"><span class="log-line info">// ready. click SCAN INBOX.</span></div>
     <div class="tab-bar" id="tabBar" style="display:none">
@@ -183,7 +186,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<!-- RULES PAGE -->
+<div class="page" id="rulesPage">
+  <div class="rules-page">
+    <div class="rules-save-banner" id="savesBanner">✓ Rules saved to your browser — active immediately on next scan.</div>
+    <div class="rules-grid" id="rulesGrid"></div>
+  </div>
+</div>
+
+<script>
 const OCC_EMAIL='howard@ohiocleancans.com';
 const CUSTOMER_FOLDER='Customer Responses';
 const ORDERS_FOLDER='Orders';
@@ -191,283 +202,319 @@ const INTUIT_OCC='ohio_clean_cans_llc+expenses@assist.intuit.com';
 const INTUIT_PERSONAL='hacjac_capital_llc+expenses@assist.intuit.com';
 const BASE=`https://graph.microsoft.com/v1.0/users/${OCC_EMAIL}`;
 
+// ── DEFAULT RULES ─────────────────────────────────────────────────────────────
+const DEFAULT_RULES = {
+  spam_domains: ['pressurecleaningleads.com','tariosysgroup.com','theseosmo.com','fusion360.agency','tozing-workfox.com','payrollceu.com','caldergr.com','eg.expedia.com','generational.deals','tigercapitalfunding.com','email.gasbuddy.com','gasbuddy.com','tello.com','news.akc.org','akc.org','sociusmarketing.com','farislee.com','sunbeltnetwork.com'],
+  spam_subjects: ['seo','graphic design','product entry for','let\'s connect','exit planning'],
+  marketing_domains: ['substack.com','alignable.com','linkedin.com','recurly.com','birdeye.org','rocketlawyer.com','cycloneshockey.com','em.weather.com','wayfair.com','members.wayfair.com','service.wayfair.com','bedbathandbeyond.com','flippnews.com','email.golf.com','golf.com','o.delta.com','tiktokshop.com','cancercrew.com','mail.cancercrew.com','is.email.nextdoor.com','sports.comms.yahoo.net','biaggi.com','mail.cursor.com'],
+  occ_domains: ['ohiocleancans.com','gorilladesk.com','clicklaboratory.com','squareup.com','square.com','intuit.com'],
+  occ_expense_senders: ['donotreply@rumpke.com'],
+  personal_expense_senders: ['pharmacy.amazon.com','eat.grubhub.com'],
+  hacjac_domains: ['hacjac.com'],
+  customer_subjects: ['re:.*invoice.*ohio','re:.*receipt.*invoice','re:.*ohio.clean.cans','re:.*receipt.*ohio'],
+  order_subjects: ['\\[new customer\\]','\\[existing customer\\]'],
+  revenue_ops: ['noreply@messaging.squareup.com','no-reply@squareup.com','notifications@stripe.com','noreply@gorilladesk.com'],
+};
+
+// ── RULE STORAGE ──────────────────────────────────────────────────────────────
+function loadRules() {
+  try {
+    const saved = localStorage.getItem('occ_rules');
+    if (saved) return { ...DEFAULT_RULES, ...JSON.parse(saved) };
+  } catch(e) {}
+  return { ...DEFAULT_RULES };
+}
+
+function saveRules(rules) {
+  localStorage.setItem('occ_rules', JSON.stringify(rules));
+  document.getElementById('savesBanner').style.display = 'block';
+  setTimeout(() => document.getElementById('savesBanner').style.display = 'none', 3000);
+}
+
+let RULES = loadRules();
+
+// ── CATEGORIZE ────────────────────────────────────────────────────────────────
+function getDomain(a){const m=(a||'').match(/@(.+)$/);return m?m[1].toLowerCase():'';}
+function dm(d,r){return d===r||d.endsWith('.'+r);}
+function isPromo(s){return [/\d+\s*%\s*off/i,/free.shipping/i,/\bsale\b/i,/coupon/i,/stock.up/i,/save.big/i,/spring.cyber/i,/price.drop/i,/exclusive.offer/i,/discount/i].some(p=>p.test(s));}
+function testPatterns(list, str) { return list.some(p => { try { return new RegExp(p,'i').test(str); } catch(e){ return str.toLowerCase().includes(p.toLowerCase()); } }); }
+
+function categorize(msg, repliedConvIds) {
+  const from = (msg.from?.emailAddress?.address || '').toLowerCase();
+  const subj = msg.subject || '';
+  const d = getDomain(from);
+
+  // Orders first
+  if (testPatterns(RULES.order_subjects, subj))
+    return {cat:'orders', badge:'b-orders', label:'ORDER'};
+
+  // Customer replies
+  if (testPatterns(RULES.customer_subjects, subj))
+    return {cat:'customer', badge:'b-customer', label:'CUSTOMER'};
+  if (repliedConvIds && repliedConvIds.has(msg.conversationId) &&
+      !RULES.revenue_ops.some(s=>from===s) && !RULES.occ_domains.some(r=>dm(d,r)))
+    return {cat:'customer', badge:'b-customer', label:'CUSTOMER'};
+
+  // Revenue ops — keep
+  if (RULES.revenue_ops.some(s => from === s))
+    return {cat:'occ', badge:'b-occ', label:'OCC'};
+
+  // OCC domains
+  if (RULES.occ_domains.some(r => dm(d, r)))
+    return {cat:'occ', badge:'b-occ', label:'OCC'};
+
+  // HacJac
+  if (RULES.hacjac_domains.some(r => dm(d, r)))
+    return {cat:'hacjac', badge:'b-hacjac', label:'HACJAC'};
+
+  // Personal expenses
+  if (RULES.personal_expense_senders.some(r => dm(d, r)) && !isPromo(subj))
+    return {cat:'expense', badge:'b-expense', label:'PERS EXP'};
+
+  // OCC expenses
+  if (RULES.occ_expense_senders.some(s => from === s) && !isPromo(subj))
+    return {cat:'expense', badge:'b-expense', label:'OCC EXP'};
+  if (dm(d,'stripe.com') && /receipt/i.test(subj) && !isPromo(subj))
+    return {cat:'expense', badge:'b-expense', label:'OCC EXP'};
+
+  // Spam domains
+  if (RULES.spam_domains.some(r => dm(d, r) || from === r))
+    return {cat:'trash', badge:'b-trash', label:'SPAM'};
+
+  // Spam subjects
+  if (testPatterns(RULES.spam_subjects, subj))
+    return {cat:'trash', badge:'b-trash', label:'SPAM'};
+
+  // Marketing/promo
+  if (RULES.marketing_domains.some(r => dm(d, r)))
+    return {cat:'trash', badge:'b-trash', label:'PROMO'};
+
+  // Remaining purchase/invoice keywords -> OCC
+  if (!isPromo(subj) && [/receipt/i,/invoice/i,/amount paid/i,/payment confirm/i,/billing statement/i,/order confirm/i].some(k=>k.test(subj)))
+    return {cat:'occ', badge:'b-occ', label:'PURCHASE'};
+
+  return {cat:'review', badge:'b-review', label:'REVIEW'};
+}
+
+// ── MSAL ──────────────────────────────────────────────────────────────────────
 const msalConfig={auth:{clientId:'4e9cd3e0-2c43-4a34-9638-ea3072453249',authority:'https://login.microsoftonline.com/a05cc711-9963-425e-9503-77c269b31fca',redirectUri:'https://buckeyeduck.github.io/occ-projects'},cache:{cacheLocation:'localStorage',storeAuthStateInCookie:false}};
 const loginRequest={scopes:['Mail.Read','Mail.ReadWrite','Mail.Send','User.Read']};
 const msalInstance=new msal.PublicClientApplication(msalConfig);
-let currentAccount=null,accessToken=null,customerFolderId=null;
+let currentAccount=null,accessToken=null,customerFolderId=null,ordersFolderId=null;
 
-const RULES={
-  occ_domains:['ohiocleancans.com','gorilladesk.com','clicklaboratory.com','squareup.com','square.com','intuit.com'],
-  revenue_ops:['noreply@messaging.squareup.com','no-reply@squareup.com','notifications@stripe.com','noreply@gorilladesk.com'],
-  occ_expense_senders:['donotreply@rumpke.com'],
-  personal_expense_domains:['pharmacy.amazon.com','eat.grubhub.com'],
-  hacjac_domains:['hacjac.com'],
-  spam_domains:['pressurecleaningleads.com','tariosysgroup.com','theseosmo.com','fusion360.agency','tozing-workfox.com','payrollceu.com','caldergr.com','eg.expedia.com','generational.deals','tigercapitalfunding.com','email.gasbuddy.com','gasbuddy.com','tello.com','news.akc.org','akc.org','sociusmarketing.com','farislee.com','sunbeltnetwork.com'],
-  marketing_domains:['substack.com','alignable.com','linkedin.com','recurly.com','birdeye.org','rocketlawyer.com','cycloneshockey.com','em.weather.com','wayfair.com','members.wayfair.com','service.wayfair.com','bedbathandbeyond.com','flippnews.com','email.golf.com','golf.com','o.delta.com','tiktokshop.com','cancercrew.com','mail.cancercrew.com','is.email.nextdoor.com','sports.comms.yahoo.net','biaggi.com','mail.cursor.com'],
-  purchase_senders:['zoro@e.zoro.com','noreply@t.vistaprint.com','pkginfo@ups.com'],
-  expense_kw:[/receipt/i,/invoice/i,/amount paid/i,/payment confirm/i,/billing statement/i,/order confirm/i],
-  customer_subj:[/re:.*invoice.*ohio/i,/re:.*receipt.*invoice/i,/re:.*ohio.clean.cans/i,/re:.*receipt.*ohio/i,/ohio.clean.cans.*invoice/i],
-  order_subj:[/^\[new customer\]/i,/^\[existing customer\]/i],
-  spam_subj:[/\bseo\b/i,/graphic.design/i,/product.entry.for/i,/let.s.connect/i,/exit.planning/i],
-  promo_kw:[/\d+\s*%\s*off/i,/free.shipping/i,/\bsale\b/i,/coupon/i,/stock.up/i,/save.big/i,/spring.cyber/i,/price.drop/i,/exclusive.offer/i,/discount/i],
-};
-
-function getDomain(a){const m=(a||'').match(/@(.+)$/);return m?m[1].toLowerCase():'';}
-function dm(d,r){return d===r||d.endsWith('.'+r);}
-function isPromo(s){return RULES.promo_kw.some(p=>p.test(s));}
-
-function categorize(msg,repliedConvIds){
-  const from=(msg.from?.emailAddress?.address||'').toLowerCase();
-  const subj=msg.subject||'';
-  const d=getDomain(from);
-  if(RULES.order_subj.some(p=>p.test(subj)))
-    return{cat:'orders',badge:'b-occ',label:'ORDER'};
-  if(RULES.customer_subj.some(p=>p.test(subj))){
-    if(/invoice/i.test(subj))log(`Customer match: ${subj.substring(0,50)}`,'ok');
-    return{cat:'customer',badge:'b-customer',label:'CUSTOMER'};
-  }
-  if(repliedConvIds&&repliedConvIds.has(msg.conversationId)&&!RULES.revenue_ops.some(s=>from===s)&&!RULES.occ_domains.some(r=>dm(d,r)))
-    return{cat:'customer',badge:'b-customer',label:'CUSTOMER'};
-  if(RULES.revenue_ops.some(s=>from===s))
-    return{cat:'occ',badge:'b-occ',label:'OCC'};
-  if(RULES.occ_domains.some(r=>dm(d,r)))
-    return{cat:'occ',badge:'b-occ',label:'OCC'};
-  if(RULES.hacjac_domains.some(r=>dm(d,r)))
-    return{cat:'hacjac',badge:'b-hacjac',label:'HACJAC'};
-  if(RULES.personal_expense_domains.some(r=>dm(d,r))&&!isPromo(subj))
-    return{cat:'expense',badge:'b-expense',label:'PERS EXP'};
-  if(RULES.occ_expense_senders.some(s=>from===s)&&!isPromo(subj))
-    return{cat:'expense',badge:'b-expense',label:'OCC EXP'};
-  if(dm(d,'stripe.com')&&/receipt/i.test(subj)&&!isPromo(subj))
-    return{cat:'expense',badge:'b-expense',label:'OCC EXP'};
-  if(RULES.spam_domains.some(r=>dm(d,r)||from===r))
-    return{cat:'trash',badge:'b-trash',label:'SPAM'};
-  if(RULES.spam_subj.some(p=>p.test(subj)))
-    return{cat:'trash',badge:'b-trash',label:'SPAM'};
-  if(RULES.marketing_domains.some(r=>dm(d,r)))
-    return{cat:'trash',badge:'b-trash',label:'PROMO'};
-  if(RULES.purchase_senders.some(s=>from===s)){
-    if(isPromo(subj))return{cat:'trash',badge:'b-trash',label:'PROMO'};
-    return{cat:'occ',badge:'b-occ',label:'PURCHASE'};
-  }
-  if(!isPromo(subj)&&RULES.expense_kw.some(k=>k.test(subj)))
-    return{cat:'occ',badge:'b-occ',label:'PURCHASE'};
-  return{cat:'review',badge:'b-review',label:'REVIEW'};
-}
-
-// AUTH
-async function init(){await msalInstance.initialize();const resp=await msalInstance.handleRedirectPromise();if(resp)currentAccount=resp.account;else{const a=msalInstance.getAllAccounts();if(a.length)currentAccount=a[0];}if(currentAccount)showApp();}
+async function init(){await msalInstance.initialize();const resp=await msalInstance.handleRedirectPromise();if(resp)currentAccount=resp.account;else{const a=msalInstance.getAllAccounts();if(a.length)currentAccount=a[0];}if(currentAccount){showApp();renderRules();}}
 async function signIn(){await msalInstance.loginRedirect(loginRequest);}
 function signOut(){msalInstance.logoutRedirect({account:currentAccount});}
 async function getToken(){const req={...loginRequest,account:currentAccount};try{const r=await msalInstance.acquireTokenSilent(req);return r.accessToken;}catch{await msalInstance.acquireTokenRedirect(req);}}
-function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('appScreen').classList.add('visible');document.getElementById('userLabel').textContent=currentAccount.username;document.getElementById('statusDot').className='status-dot on';document.getElementById('statusLabel').textContent='signed in';}
 
-// LOG
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('inboxPage').classList.add('visible');
+  document.getElementById('userLabel').textContent=currentAccount.username;
+  document.getElementById('statusDot').className='status-dot on';
+  document.getElementById('statusLabel').textContent='signed in';
+}
+
+function switchPage(page){
+  document.getElementById('inboxPage').classList.toggle('visible', page==='inbox');
+  document.getElementById('rulesPage').classList.toggle('visible', page==='rules');
+  document.getElementById('navInbox').classList.toggle('active', page==='inbox');
+  document.getElementById('navRules').classList.toggle('active', page==='rules');
+  if(page==='rules') renderRules();
+}
+
+// ── LOG ───────────────────────────────────────────────────────────────────────
 function log(msg,type='info'){const p=document.getElementById('logPanel');const s=document.createElement('span');s.className=`log-line ${type}`;const ts=new Date().toLocaleTimeString('en-US',{hour12:false});s.textContent=`[${ts}] ${msg}`;p.appendChild(s);p.appendChild(document.createElement('br'));p.scrollTop=p.scrollHeight;}
 
-// GRAPH
+// ── GRAPH ─────────────────────────────────────────────────────────────────────
 async function gGet(url){const r=await fetch(url,{headers:{Authorization:`Bearer ${accessToken}`}});if(!r.ok)throw new Error(`${r.status}`);return r.json();}
 async function gPost(url,body){const r=await fetch(url,{method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`${r.status}`);}return r.status===204?null:r.json().catch(()=>null);}
 
-// FOLDER
-async function ensureCustomerFolder(){
+async function ensureFolder(name, idVar){
   const data=await gGet(`${BASE}/mailFolders?$top=50`);
-  const ex=(data.value||[]).find(f=>f.displayName===CUSTOMER_FOLDER);
-  if(ex){customerFolderId=ex.id;return;}
-  const c=await gPost(`${BASE}/mailFolders`,{displayName:CUSTOMER_FOLDER});
-  customerFolderId=c.id;
-  log(`Created "${CUSTOMER_FOLDER}" folder.`,'ok');
-}
-async function ensureOrdersFolder(){
-  const data=await gGet(`${BASE}/mailFolders?$top=50`);
-  const ex=(data.value||[]).find(f=>f.displayName===ORDERS_FOLDER);
-  if(ex){ordersFolderId=ex.id;return;}
-  const c=await gPost(`${BASE}/mailFolders`,{displayName:ORDERS_FOLDER});
-  ordersFolderId=c.id;
-  log(`Created "${ORDERS_FOLDER}" folder.`,'ok');
+  const ex=(data.value||[]).find(f=>f.displayName===name);
+  if(ex)return ex.id;
+  const c=await gPost(`${BASE}/mailFolders`,{displayName:name});
+  log(`Created "${name}" folder.`,'ok');
+  return c.id;
 }
 
-// STATE
+// ── STATE ─────────────────────────────────────────────────────────────────────
 let cats={trash:[],occ:[],personal:[],hacjac:[],customer:[],orders:[],expense:[],review:[]};
-let currentTab='review',selected=new Set(),ordersFolderId=null;
+let currentTab='review',selected=new Set();
 
-// SCAN
+// ── SCAN ──────────────────────────────────────────────────────────────────────
 async function runScan(){
   const btn=document.getElementById('scanBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>SCANNING...';
+  RULES=loadRules();
   log('Connecting...','info');
   try{
     accessToken=await getToken();
-    await ensureCustomerFolder();
-    await ensureOrdersFolder();
+    customerFolderId=await ensureFolder(CUSTOMER_FOLDER);
+    ordersFolderId=await ensureFolder(ORDERS_FOLDER);
 
-    // Get sent items to find replied conversations
-    log('Checking sent items...','info');
     const repliedConvIds=new Set();
-    let surl=`${BASE}/mailFolders/sentitems/messages?$top=100&$select=conversationId`;
-    let sp=0;
-    while(surl&&sp<3){
-      try{const sd=await gGet(surl);(sd.value||[]).forEach(m=>{if(m.conversationId)repliedConvIds.add(m.conversationId);});surl=sd['@odata.nextLink']||null;sp++;}
-      catch(e){log('Sent items: '+e.message,'warn');break;}
-    }
-    log(`${repliedConvIds.size} replied conversations found.`,'ok');
+    let surl=`${BASE}/mailFolders/sentitems/messages?$top=100&$select=conversationId`,sp=0;
+    while(surl&&sp<3){try{const sd=await gGet(surl);(sd.value||[]).forEach(m=>{if(m.conversationId)repliedConvIds.add(m.conversationId);});surl=sd['@odata.nextLink']||null;sp++;}catch(e){break;}}
+    log(`${repliedConvIds.size} replied convs.`,'info');
 
-    // Get inbox
-    let messages=[],url=`${BASE}/mailFolders/inbox/messages?$top=100&$select=id,subject,from,toRecipients,receivedDateTime,conversationId`,pages=0;
-    while(url&&pages<5){
-      const data=await gGet(url);
-      messages.push(...(data.value||[]));
-      url=data['@odata.nextLink']||null;pages++;
-      log(`Fetched ${messages.length}...`,'info');
-    }
+    let messages=[],url=`${BASE}/mailFolders/inbox/messages?$top=100&$select=id,subject,from,receivedDateTime,conversationId`,pages=0;
+    while(url&&pages<5){const data=await gGet(url);messages.push(...(data.value||[]));url=data['@odata.nextLink']||null;pages++;log(`Fetched ${messages.length}...`,'info');}
 
-    log(`${messages.length} messages. Categorizing...`,'ok');
-    cats={trash:[],occ:[],personal:[],hacjac:[],customer:[],expense:[],review:[]};
+    cats={trash:[],occ:[],personal:[],hacjac:[],customer:[],orders:[],expense:[],review:[]};
     for(const msg of messages){const r=categorize(msg,repliedConvIds);msg._cat=r;cats[r.cat].push(msg);}
 
-    // Auto-move customer emails
-    if(cats.customer.length&&customerFolderId){
-      log(`Moving ${cats.customer.length} customer emails...`,'info');
-      for(const msg of cats.customer){
-        try{await gPost(`${BASE}/messages/${msg.id}/move`,{destinationId:customerFolderId});}
-        catch(e){log('Move failed: '+e.message,'warn');}
-      }
-      log(`Moved ${cats.customer.length} to Customer Responses.`,'ok');
-    }
-    // Auto-move orders
-    if(cats.orders.length&&ordersFolderId){
-      log(`Moving ${cats.orders.length} orders...`,'info');
-      for(const msg of cats.orders){
-        try{await gPost(`${BASE}/messages/${msg.id}/move`,{destinationId:ordersFolderId});}
-        catch(e){log('Move failed: '+e.message,'warn');}
-      }
-      log(`Moved ${cats.orders.length} to Orders.`,'ok');
-    }
+    // Auto-move customers and orders
+    for(const msg of cats.customer){try{await gPost(`${BASE}/messages/${msg.id}/move`,{destinationId:customerFolderId});}catch(e){}}
+    if(cats.customer.length)log(`Moved ${cats.customer.length} to Customer Responses.`,'ok');
+    for(const msg of cats.orders){try{await gPost(`${BASE}/messages/${msg.id}/move`,{destinationId:ordersFolderId});}catch(e){}}
+    if(cats.orders.length)log(`Moved ${cats.orders.length} to Orders.`,'ok');
 
     updateStats();showTab('review');
     document.getElementById('tabBar').style.display='flex';
     document.getElementById('deleteBtn').disabled=false;
-    document.getElementById('forwardOccBtn').disabled=cats.expense.filter(m=>m._cat.label==='OCC EXP').length===0;
-    document.getElementById('forwardPersonalBtn').disabled=cats.expense.filter(m=>m._cat.label==='PERS EXP').length===0;
-    log(`Done. ${cats.trash.length} trash | ${cats.orders.length} orders | ${cats.review.length} review | ${cats.expense.length} expenses.`,'ok');
+    document.getElementById('forwardOccBtn').disabled=!cats.expense.some(m=>m._cat.label==='OCC EXP');
+    document.getElementById('forwardPersonalBtn').disabled=!cats.expense.some(m=>m._cat.label==='PERS EXP');
+    log(`Done. ${cats.review.length} review | ${cats.trash.length} trash | ${cats.orders.length} orders | ${cats.customer.length} customer | ${cats.expense.length} expenses.`,'ok');
   }catch(e){log('ERROR: '+e.message,'err');document.getElementById('statusDot').className='status-dot err';}
   btn.disabled=false;btn.textContent='▶ SCAN INBOX';
 }
 
-// STATS
+// ── STATS + TABS ──────────────────────────────────────────────────────────────
 function updateStats(){
   const map={trash:'sTrash',occ:'sOcc',personal:'sPersonal',hacjac:'sHacjac',customer:'sCustomer',orders:'sOrders',expense:'sExpense',review:'sReview'};
-  Object.entries(map).forEach(([k,id])=>{
-    const el=document.getElementById(id);if(el)el.textContent=cats[k].length;
-    const tc=document.getElementById('tc-'+k);if(tc)tc.textContent=cats[k].length;
-  });
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.textContent=cats[k].length;const tc=document.getElementById('tc-'+k);if(tc)tc.textContent=cats[k].length;});
 }
-
-// TABS
 function showTab(tab){
   currentTab=tab;selected.clear();
-  ['trash','occ','personal','hacjac','customer','orders','expense','review'].forEach(t=>{
-    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-  });
+  ['trash','occ','personal','hacjac','customer','orders','expense','review'].forEach(t=>{document.getElementById('tab-'+t).classList.toggle('active',t===tab);});
   renderTable(cats[tab]);
 }
 
-// RENDER
+// ── RENDER TABLE ──────────────────────────────────────────────────────────────
 function renderTable(msgs){
   const area=document.getElementById('tableArea');
   if(!msgs.length){area.innerHTML='<div class="empty">// nothing here</div>';return;}
   const isReview=currentTab==='review';
-  const isTrash=currentTab==='trash';
-  const sel=isTrash;
+  const sel=currentTab==='trash';
   let html='';
-  if(sel)html+=`<div class="action-bar"><label class="select-all-label"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> select all</label></div>`;
-  html+=`<table class="email-table"><thead><tr>${sel?'<th style="width:28px"></th>':''}<th>FROM</th><th>SUBJECT</th><th>CAT</th><th>DATE</th>${isReview?'<th>TRIAGE</th>':''}</tr></thead><tbody>`;
+  if(sel)html+=`<div style="display:flex;margin-bottom:10px;"><label class="select-all-label"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> select all</label></div>`;
+  html+=`<table class="email-table"><thead><tr>${sel?'<th style="width:28px"></th>':''}<th>FROM</th><th>SUBJECT</th><th>CAT</th><th>DATE</th>${isReview?'<th>ACTION</th>':''}</tr></thead><tbody>`;
   for(const msg of msgs){
-    const from=msg.from?.emailAddress?.address||'';
-    const name=msg.from?.emailAddress?.name||from;
-    const subj=msg.subject||'(no subject)';
-    const date=msg.receivedDateTime?new Date(msg.receivedDateTime).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    const from=msg.from?.emailAddress?.address||'',name=msg.from?.emailAddress?.name||from,subj=msg.subject||'(no subject)',date=msg.receivedDateTime?new Date(msg.receivedDateTime).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
     const triageBtns=isReview?`<td><div class="triage-btns">
-      <button class="tb tb-occ" onclick="triage('${msg.id}','occ')" title="OCC Business">OCC</button>
-      <button class="tb tb-personal" onclick="triage('${msg.id}','personal')" title="Personal">PERS</button>
-      <button class="tb tb-hacjac" onclick="triage('${msg.id}','hacjac')" title="HacJac">HAC</button>
-      <button class="tb tb-customer" onclick="triage('${msg.id}','customer')" title="Customer Response">CUST</button>
-      <button class="tb tb-occ" onclick="triage('${msg.id}','orders')" title="New Order" style="background:#0d2e2a;color:#2dd4bf;border:1px solid #0d4a42;">ORD</button>
-      <button class="tb tb-trash" onclick="triage('${msg.id}','trash')" title="Trash">TRASH</button>
+      <button class="tb tb-occ" onclick="triage('${msg.id}','occ')">OCC</button>
+      <button class="tb tb-personal" onclick="triage('${msg.id}','personal')">PERS</button>
+      <button class="tb tb-hacjac" onclick="triage('${msg.id}','hacjac')">HAC</button>
+      <button class="tb tb-customer" onclick="triage('${msg.id}','customer')">CUST</button>
+      <button class="tb tb-orders" onclick="triage('${msg.id}','orders')">ORD</button>
+      <button class="tb tb-trash" onclick="triage('${msg.id}','trash')">TRASH</button>
     </div></td>`:'';
     html+=`<tr id="row-${msg.id}">${sel?`<td><input type="checkbox" class="cb" data-id="${msg.id}" onchange="toggleSelect('${msg.id}',this.checked)"></td>`:''}<td class="from-cell" title="${from}">${name}</td><td class="subj-cell" title="${subj}">${subj}</td><td><span class="badge ${msg._cat.badge}">${msg._cat.label}</span></td><td class="date-cell">${date}</td>${triageBtns}</tr>`;
   }
   html+='</tbody></table>';area.innerHTML=html;
 }
-
 function toggleSelect(id,checked){if(checked)selected.add(id);else selected.delete(id);}
 function toggleSelectAll(cb){document.querySelectorAll('.cb[data-id]').forEach(b=>{b.checked=cb.checked;toggleSelect(b.dataset.id,cb.checked);});}
 
-// TRIAGE
+// ── TRIAGE ────────────────────────────────────────────────────────────────────
 async function triage(id,action){
   const row=document.getElementById('row-'+id);
   if(row)row.style.opacity='0.3';
-  // Find the message
   let msg=null;
   for(const k of Object.keys(cats)){const m=cats[k].find(x=>x.id===id);if(m){msg=m;break;}}
-
   try{
-    if(action==='trash'){
-      await gPost(`${BASE}/messages/${id}/move`,{destinationId:'deleteditems'});
-      log(`Trashed: ${msg?.subject||id}`,'ok');
-    } else if(action==='customer'){
-      if(!customerFolderId)await ensureCustomerFolder();
-      await gPost(`${BASE}/messages/${id}/move`,{destinationId:customerFolderId});
-      log(`Moved to Customer Responses.`,'ok');
-    } else if(action==='orders'){
-      if(!ordersFolderId)await ensureOrdersFolder();
-      await gPost(`${BASE}/messages/${id}/move`,{destinationId:ordersFolderId});
-      log(`Moved to Orders.`,'ok');
-    } else {
-      // Just label it — keep in inbox, move between cats
-      log(`Marked as ${action.toUpperCase()} — kept in inbox.`,'ok');
+    if(action==='trash'){await gPost(`${BASE}/messages/${id}/move`,{destinationId:'deleteditems'});log(`Trashed.`,'ok');}
+    else if(action==='customer'){if(!customerFolderId)customerFolderId=await ensureFolder(CUSTOMER_FOLDER);await gPost(`${BASE}/messages/${id}/move`,{destinationId:customerFolderId});log(`→ Customer Responses`,'ok');}
+    else if(action==='orders'){if(!ordersFolderId)ordersFolderId=await ensureFolder(ORDERS_FOLDER);await gPost(`${BASE}/messages/${id}/move`,{destinationId:ordersFolderId});log(`→ Orders`,'ok');}
+    else{log(`Marked as ${action.toUpperCase()}.`,'ok');}
+    for(const k of Object.keys(cats))cats[k]=cats[k].filter(x=>x.id!==id);
+    if(action!=='trash'&&action!=='customer'&&action!=='orders'){
+      const badges={occ:'b-occ',personal:'b-personal',hacjac:'b-hacjac'};
+      if(msg){msg._cat={cat:action,badge:badges[action]||'b-review',label:action.toUpperCase()};cats[action].push(msg);}
     }
-    // Move between cat lists
-    if(msg){
-      for(const k of Object.keys(cats))cats[k]=cats[k].filter(x=>x.id!==id);
-      if(action!=='trash'&&action!=='customer'){
-        const newBadge={occ:'b-occ',personal:'b-personal',hacjac:'b-hacjac'}[action]||'b-review';
-        msg._cat={cat:action,badge:newBadge,label:action.toUpperCase()};
-        cats[action].push(msg);
-      }
-    }
-    updateStats();
-    if(row)row.remove();
-  }catch(e){
-    log(`Failed: ${e.message}`,'err');
-    if(row)row.style.opacity='1';
-  }
+    updateStats();if(row)row.remove();
+  }catch(e){log(`Failed: ${e.message}`,'err');if(row)row.style.opacity='1';}
 }
 
-// TRASH SELECTED
+// ── TRASH + FORWARD ───────────────────────────────────────────────────────────
 async function trashSelected(){
   const ids=(selected.size===0)?cats.trash.map(m=>m.id):[...selected];
   if(!ids.length){log('Nothing to trash.','warn');return;}
   const btn=document.getElementById('deleteBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>TRASHING...';
-  log(`Trashing ${ids.length}...`,'info');
   let ok=0;
-  for(const id of ids){
-    try{await gPost(`${BASE}/messages/${id}/move`,{destinationId:'deleteditems'});ok++;}
-    catch(e){log(`Failed: ${e.message}`,'err');}
-  }
+  for(const id of ids){try{await gPost(`${BASE}/messages/${id}/move`,{destinationId:'deleteditems'});ok++;}catch(e){log(`Failed: ${e.message}`,'err');}}
   log(`Trashed ${ok}.`,'ok');
-  const idSet=new Set(ids);
-  cats.trash=cats.trash.filter(m=>!idSet.has(m.id));
-  selected.clear();updateStats();showTab(currentTab);
-  btn.disabled=false;btn.textContent='⌫ TRASH SELECTED';
+  const idSet=new Set(ids);cats.trash=cats.trash.filter(m=>!idSet.has(m.id));
+  selected.clear();updateStats();showTab(currentTab);btn.disabled=false;btn.textContent='⌫ TRASH SELECTED';
 }
 
-// FORWARD EXPENSES
 async function forwardExpenses(type){
-  const isPersonal=type==='personal';
-  const msgs=cats.expense.filter(m=>isPersonal?(m._cat.label==='PERS EXP'):(m._cat.label==='OCC EXP'));
-  const dest=isPersonal?INTUIT_PERSONAL:INTUIT_OCC;
-  const label=isPersonal?'personal':'OCC';
+  const isP=type==='personal';
+  const msgs=cats.expense.filter(m=>isP?(m._cat.label==='PERS EXP'):(m._cat.label==='OCC EXP'));
+  const dest=isP?INTUIT_PERSONAL:INTUIT_OCC;
+  const label=isP?'personal':'OCC';
   if(!msgs.length){log(`No ${label} expenses.`,'warn');return;}
-  const btnId=isPersonal?'forwardPersonalBtn':'forwardOccBtn';
+  const btnId=isP?'forwardPersonalBtn':'forwardOccBtn';
   const btn=document.getElementById(btnId);btn.disabled=true;btn.innerHTML='<span class="spinner"></span>FORWARDING...';
-  log(`Forwarding ${msgs.lengt
+  let ok=0;
+  for(const msg of msgs){try{await gPost(`${BASE}/messages/${msg.id}/forward`,{toRecipients:[{emailAddress:{address:dest}}],comment:`[FWD Receipt] ${label}`});log(`Forwarded: ${msg.subject}`,'ok');ok++;}catch(e){log(`Failed: ${e.message}`,'err');}}
+  log(`Forwarded ${ok} ${label} receipts.`,'ok');
+  btn.disabled=false;btn.textContent=isP?'↗ FWD PERSONAL EXPENSES':'↗ FWD OCC EXPENSES';
+}
+
+// ── RULES UI ──────────────────────────────────────────────────────────────────
+const RULE_DEFS = [
+  {key:'spam_domains', label:'Spam Domains', hint:'domain.com', desc:'Emails from these domains → TRASH'},
+  {key:'spam_subjects', label:'Spam Subject Keywords', hint:'keyword or phrase', desc:'Emails with these words in subject → TRASH'},
+  {key:'marketing_domains', label:'Marketing / Newsletter Domains', hint:'newsletter.com', desc:'Newsletters and promos → TRASH'},
+  {key:'occ_domains', label:'OCC Business Domains', hint:'vendor.com', desc:'These domains → OCC'},
+  {key:'occ_expense_senders', label:'OCC Expense Senders', hint:'billing@vendor.com', desc:'Receipts from these → OCC EXPENSE'},
+  {key:'personal_expense_senders', label:'Personal Expense Senders', hint:'receipts@store.com', desc:'Receipts from these → PERSONAL EXPENSE'},
+  {key:'hacjac_domains', label:'HacJac Domains', hint:'hacjac.com', desc:'These domains → HACJAC'},
+  {key:'customer_subjects', label:'Customer Reply Patterns', hint:'re:.*invoice.*ohio', desc:'Regex patterns for customer replies → CUSTOMER'},
+  {key:'order_subjects', label:'New Order Patterns', hint:'\\[new customer\\]', desc:'Regex patterns for new orders → ORDERS'},
+];
+
+function renderRules(){
+  const grid=document.getElementById('rulesGrid');
+  grid.innerHTML='';
+  RULES=loadRules();
+  for(const def of RULE_DEFS){
+    const list=RULES[def.key]||[];
+    const card=document.createElement('div');
+    card.className='rule-card';
+    card.innerHTML=`
+      <div class="rule-card-title">${def.label}<span>${def.desc}</span></div>
+      <div class="rule-list" id="list-${def.key}">
+        ${list.map((item,i)=>`<div class="rule-item"><span>${item}</span><button class="rule-del" onclick="deleteRule('${def.key}',${i})">×</button></div>`).join('')}
+      </div>
+      <div class="rule-add">
+        <input class="rule-input" id="input-${def.key}" placeholder="${def.hint}" onkeydown="if(event.key==='Enter')addRule('${def.key}')">
+        <button class="rule-add-btn" onclick="addRule('${def.key}')">+ Add</button>
+      </div>`;
+    grid.appendChild(card);
+  }
+}
+
+function addRule(key){
+  const input=document.getElementById('input-'+key);
+  const val=input.value.trim();
+  if(!val)return;
+  RULES=loadRules();
+  if(!RULES[key])RULES[key]=[];
+  if(!RULES[key].includes(val)){RULES[key].push(val);saveRules(RULES);}
+  input.value='';
+  renderRules();
+}
+
+function deleteRule(key,idx){
+  RULES=loadRules();
+  if(RULES[key]){RULES[key].splice(idx,1);saveRules(RULES);}
+  renderRules();
+}
+
+init();
+</script>
+</body>
+</html>
