@@ -7,248 +7,83 @@
 <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
-
-  :root {
-    --bg: #0e0f0e;
-    --surface: #161917;
-    --border: #2a2e2b;
-    --border-light: #333836;
-    --accent: #4ade80;
-    --accent-dim: #1a3d25;
-    --accent-text: #86efac;
-    --red: #f87171;
-    --red-dim: #3d1a1a;
-    --amber: #fbbf24;
-    --amber-dim: #3d2e0a;
-    --blue: #60a5fa;
-    --blue-dim: #1a2a3d;
-    --text: #e2e8e4;
-    --text-dim: #6b7a6e;
-    --text-mid: #9aaa9e;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 14px;
-    min-height: 100vh;
-  }
-
-  .header {
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 100;
-  }
-
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .logo { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .08em; }
-  .logo-sep { color: var(--border-light); margin: 0 4px; }
-  .header-title { font-family: var(--mono); font-size: 12px; color: var(--text-dim); letter-spacing: .05em; }
-
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--text-dim);
-    display: inline-block; margin-right: 6px;
-    transition: background .3s;
-  }
-  .status-dot.connected { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-  .status-dot.error { background: var(--red); }
-  .status-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
-
-  /* Login screen */
-  .login-screen {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    min-height: calc(100vh - 53px);
-    gap: 20px;
-  }
-  .login-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 40px 48px;
-    text-align: center;
-    max-width: 380px;
-    width: 100%;
-  }
-  .login-box h2 {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: .1em;
-    margin-bottom: 8px;
-  }
-  .login-box p {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 28px;
-    line-height: 1.6;
-  }
-  .btn-signin {
-    background: var(--accent);
-    color: #0e0f0e;
-    border: none;
-    border-radius: 4px;
-    padding: 11px 28px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: .06em;
-    cursor: pointer;
-    width: 100%;
-    transition: background .15s;
-  }
-  .btn-signin:hover { background: #86efac; }
-
-  /* Main app */
-  .app { display: none; }
-  .app.visible { display: flex; height: calc(100vh - 53px); }
-
-  .sidebar {
-    width: 240px; min-width: 240px;
-    border-right: 1px solid var(--border);
-    padding: 20px 16px;
-    display: flex; flex-direction: column;
-    gap: 20px; overflow-y: auto;
-  }
-
-  .section-label {
-    font-family: var(--mono); font-size: 10px; font-weight: 600;
-    color: var(--text-dim); letter-spacing: .1em;
-    text-transform: uppercase; margin-bottom: 8px;
-  }
-
-  .btn {
-    width: 100%; padding: 9px 12px; border-radius: 4px;
-    font-family: var(--mono); font-size: 12px; font-weight: 600;
-    letter-spacing: .05em; cursor: pointer; border: none;
-    transition: all .15s;
-  }
-  .btn-primary { background: var(--accent); color: #0e0f0e; }
-  .btn-primary:hover { background: #86efac; }
-  .btn-primary:disabled { background: var(--accent-dim); color: var(--text-dim); cursor: not-allowed; }
-
-  .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid #5a2222; margin-top: 6px; }
-  .btn-danger:hover { background: #4a1a1a; }
-  .btn-danger:disabled { opacity: .4; cursor: not-allowed; }
-
-  .btn-forward { background: var(--blue-dim); color: var(--blue); border: 1px solid #1e3a5a; margin-top: 6px; }
-  .btn-forward:hover { background: #162d4a; }
-  .btn-forward:disabled { opacity: .4; cursor: not-allowed; }
-
-  .btn-signout { background: transparent; color: var(--text-dim); border: 1px solid var(--border); margin-top: 6px; font-size: 11px; }
-  .btn-signout:hover { color: var(--text); border-color: var(--border-light); }
-
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; }
-  .stat-box .n { font-family: var(--mono); font-size: 20px; font-weight: 600; line-height: 1; }
-  .stat-box .l { font-size: 10px; color: var(--text-dim); margin-top: 3px; font-family: var(--mono); }
-  .n-red { color: var(--red); }
-  .n-green { color: var(--accent); }
-  .n-amber { color: var(--amber); }
-  .n-blue { color: var(--blue); }
-
-  .content { flex: 1; overflow-y: auto; padding: 20px 24px; }
-
-  .log-panel {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 6px; padding: 12px 14px;
-    font-family: var(--mono); font-size: 11px; color: var(--text-mid);
-    max-height: 110px; overflow-y: auto; margin-bottom: 20px; line-height: 1.7;
-  }
-  .log-line { display: block; }
-  .log-line.ok { color: var(--accent-text); }
-  .log-line.err { color: var(--red); }
-  .log-line.info { color: var(--text-mid); }
-  .log-line.warn { color: var(--amber); }
-
-  .tab-bar {
-    display: flex; gap: 2px; margin-bottom: 16px;
-    border-bottom: 1px solid var(--border); padding-bottom: 0;
-  }
-  .tab {
-    font-family: var(--mono); font-size: 11px;
-    padding: 6px 14px 8px; cursor: pointer;
-    color: var(--text-dim); border-bottom: 2px solid transparent;
-    margin-bottom: -1px; transition: all .15s;
-    background: none; border-top: none; border-left: none; border-right: none;
-  }
-  .tab:hover { color: var(--text); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-count {
-    font-size: 10px; background: var(--surface);
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: 0 5px; margin-left: 5px; color: var(--text-dim);
-  }
-
-  .email-table { width: 100%; border-collapse: collapse; }
-  .email-table th {
-    font-family: var(--mono); font-size: 10px; font-weight: 600;
-    color: var(--text-dim); letter-spacing: .08em; text-transform: uppercase;
-    padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border);
-  }
-  .email-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 12px; vertical-align: middle; }
-  .email-table tr:hover td { background: var(--surface); }
-
-  .from-cell { font-weight: 500; color: var(--text); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .subj-cell { color: var(--text-mid); max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .date-cell { font-family: var(--mono); font-size: 10px; color: var(--text-dim); white-space: nowrap; }
-
-  .badge { font-family: var(--mono); font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 3px; white-space: nowrap; letter-spacing: .04em; }
-  .b-delete { background: var(--red-dim); color: var(--red); }
-  .b-keep { background: var(--accent-dim); color: var(--accent-text); }
-  .b-ask { background: var(--amber-dim); color: var(--amber); }
-  .b-purchase { background: var(--blue-dim); color: var(--blue); }
-  .b-expense { background: #1a2a3d; color: #93c5fd; }
-
-  .cb { cursor: pointer; width: 14px; height: 14px; accent-color: var(--accent); }
-
-  .action-bar { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
-  .action-bar .btn { width: auto; padding: 6px 14px; font-size: 11px; }
-  .select-all-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-left: auto; cursor: pointer; }
-  .select-all-label input { margin-right: 5px; accent-color: var(--accent); }
-
-  .intuit-addr { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-top: 4px; word-break: break-all; }
-  .user-label { font-family: var(--mono); font-size: 11px; color: var(--accent-text); margin-bottom: 4px; }
-
-  .empty { color: var(--text-dim); font-family: var(--mono); font-size: 12px; padding: 20px 0; text-align: center; }
-
-  .spinner {
-    display: inline-block; width: 10px; height: 10px;
-    border: 2px solid var(--border-light); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin .6s linear infinite;
-    margin-right: 6px; vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  :root{--bg:#0e0f0e;--surface:#161917;--border:#2a2e2b;--border-light:#333836;--accent:#4ade80;--accent-dim:#1a3d25;--accent-text:#86efac;--red:#f87171;--red-dim:#3d1a1a;--amber:#fbbf24;--amber-dim:#3d2e0a;--blue:#60a5fa;--blue-dim:#1a2a3d;--purple:#c084fc;--purple-dim:#2d1a3d;--text:#e2e8e4;--text-dim:#6b7a6e;--text-mid:#9aaa9e;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;}
+  .header{border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:100;}
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .logo{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;}
+  .logo-sep{color:var(--border-light);margin:0 4px;}
+  .header-title{font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.05em;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);display:inline-block;margin-right:6px;transition:background .3s;}
+  .status-dot.connected{background:var(--accent);box-shadow:0 0 6px var(--accent);}
+  .status-dot.error{background:var(--red);}
+  .status-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+  .login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 53px);}
+  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:40px 48px;text-align:center;max-width:380px;width:100%;}
+  .login-box h2{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent);letter-spacing:.1em;margin-bottom:8px;}
+  .login-box p{font-size:12px;color:var(--text-dim);margin-bottom:28px;line-height:1.6;}
+  .btn-signin{background:var(--accent);color:#0e0f0e;border:none;border-radius:4px;padding:11px 28px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer;width:100%;transition:background .15s;}
+  .btn-signin:hover{background:#86efac;}
+  .app{display:none;}
+  .app.visible{display:flex;height:calc(100vh - 53px);}
+  .sidebar{width:240px;min-width:240px;border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
+  .section-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .btn{width:100%;padding:9px 12px;border-radius:4px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;border:none;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:#0e0f0e;}
+  .btn-primary:hover{background:#86efac;}
+  .btn-primary:disabled{background:var(--accent-dim);color:var(--text-dim);cursor:not-allowed;}
+  .btn-danger{background:var(--red-dim);color:var(--red);border:1px solid #5a2222;margin-top:6px;}
+  .btn-danger:hover{background:#4a1a1a;}
+  .btn-danger:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-forward{background:var(--blue-dim);color:var(--blue);border:1px solid #1e3a5a;margin-top:6px;}
+  .btn-forward:hover{background:#162d4a;}
+  .btn-forward:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-forward-personal{background:var(--purple-dim);color:var(--purple);border:1px solid #3d1a5a;margin-top:6px;}
+  .btn-forward-personal:hover{background:#261445;}
+  .btn-forward-personal:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-signout{background:transparent;color:var(--text-dim);border:1px solid var(--border);margin-top:6px;font-size:11px;}
+  .btn-signout:hover{color:var(--text);border-color:var(--border-light);}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:8px 10px;}
+  .stat-box .n{font-family:var(--mono);font-size:20px;font-weight:600;line-height:1;}
+  .stat-box .l{font-size:10px;color:var(--text-dim);margin-top:3px;font-family:var(--mono);}
+  .n-red{color:var(--red);}.n-green{color:var(--accent);}.n-amber{color:var(--amber);}.n-blue{color:var(--blue);}.n-purple{color:var(--purple);}
+  .content{flex:1;overflow-y:auto;padding:20px 24px;}
+  .log-panel{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--text-mid);max-height:110px;overflow-y:auto;margin-bottom:20px;line-height:1.7;}
+  .log-line{display:block;}.log-line.ok{color:var(--accent-text);}.log-line.err{color:var(--red);}.log-line.info{color:var(--text-mid);}.log-line.warn{color:var(--amber);}
+  .tab-bar{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--border);}
+  .tab{font-family:var(--mono);font-size:11px;padding:6px 14px 8px;cursor:pointer;color:var(--text-dim);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .tab-count{font-size:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0 5px;margin-left:5px;color:var(--text-dim);}
+  .email-table{width:100%;border-collapse:collapse;}
+  .email-table th{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);}
+  .email-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
+  .email-table tr:hover td{background:var(--surface);}
+  .from-cell{font-weight:500;color:var(--text);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .subj-cell{color:var(--text-mid);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .date-cell{font-family:var(--mono);font-size:10px;color:var(--text-dim);white-space:nowrap;}
+  .badge{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap;letter-spacing:.04em;}
+  .b-delete{background:var(--red-dim);color:var(--red);}.b-keep{background:var(--accent-dim);color:var(--accent-text);}.b-ask{background:var(--amber-dim);color:var(--amber);}.b-purchase{background:var(--blue-dim);color:var(--blue);}.b-expense{background:#1a2a3d;color:#93c5fd;}.b-personal{background:var(--purple-dim);color:var(--purple);}
+  .cb{cursor:pointer;width:14px;height:14px;accent-color:var(--accent);}
+  .action-bar{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
+  .action-bar .btn{width:auto;padding:6px 14px;font-size:11px;}
+  .select-all-label{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-left:auto;cursor:pointer;}
+  .select-all-label input{margin-right:5px;accent-color:var(--accent);}
+  .intuit-addr{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:4px;word-break:break-all;}
+  .user-label{font-family:var(--mono);font-size:11px;color:var(--accent-text);margin-bottom:4px;}
+  .empty{color:var(--text-dim);font-family:var(--mono);font-size:12px;padding:20px 0;text-align:center;}
+  .spinner{display:inline-block;width:10px;height:10px;border:2px solid var(--border-light);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;margin-right:6px;vertical-align:middle;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <div class="header-left">
-    <span class="logo">OCC</span>
-    <span class="logo-sep">/</span>
-    <span class="header-title">INBOX SORTER</span>
-  </div>
-  <div>
-    <span class="status-dot" id="statusDot"></span>
-    <span class="status-label" id="statusLabel">not signed in</span>
-  </div>
+  <div class="header-left"><span class="logo">OCC</span><span class="logo-sep">/</span><span class="header-title">INBOX SORTER</span></div>
+  <div><span class="status-dot" id="statusDot"></span><span class="status-label" id="statusLabel">not signed in</span></div>
 </div>
 
-<!-- Login Screen -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <h2>OCC INBOX SORTER</h2>
@@ -257,7 +92,6 @@
   </div>
 </div>
 
-<!-- Main App -->
 <div class="app" id="appScreen">
   <div class="sidebar">
     <div>
@@ -266,365 +100,126 @@
       <button class="btn btn-primary" id="scanBtn" onclick="runScan()">▶ SCAN INBOX</button>
       <button class="btn btn-signout" onclick="signOut()">sign out</button>
     </div>
-
     <div>
       <div class="section-label">Actions</div>
       <button class="btn btn-danger" id="deleteBtn" onclick="deleteSelected()" disabled>⌫ TRASH SELECTED</button>
-      <button class="btn btn-forward" id="forwardBtn" onclick="forwardExpenses()" disabled>↗ FORWARD EXPENSES</button>
+      <button class="btn btn-forward" id="forwardBtn" onclick="forwardExpenses('occ')" disabled>↗ FORWARD OCC EXPENSES</button>
       <div class="intuit-addr">→ ohio_clean_cans_llc+expenses<br>@assist.intuit.com</div>
+      <button class="btn btn-forward-personal" id="forwardPersonalBtn" onclick="forwardExpenses('personal')" disabled>↗ FORWARD PERSONAL EXPENSES</button>
+      <div class="intuit-addr">→ hacjac_capital_llc+expenses<br>@assist.intuit.com</div>
     </div>
-
     <div>
       <div class="section-label">Summary</div>
       <div class="stats-grid">
         <div class="stat-box"><div class="n n-red" id="statDelete">0</div><div class="l">delete</div></div>
         <div class="stat-box"><div class="n n-green" id="statKeep">0</div><div class="l">keep</div></div>
+        <div class="stat-box"><div class="n n-blue" id="statExpense">0</div><div class="l">occ exp</div></div>
+        <div class="stat-box"><div class="n n-purple" id="statPersonal">0</div><div class="l">personal</div></div>
         <div class="stat-box"><div class="n n-blue" id="statPurchase">0</div><div class="l">purchase</div></div>
         <div class="stat-box"><div class="n n-amber" id="statAsk">0</div><div class="l">review</div></div>
       </div>
     </div>
   </div>
-
   <div class="content">
-    <div class="log-panel" id="logPanel">
-      <span class="log-line info">// signed in. click SCAN INBOX to begin.</span>
-    </div>
-
+    <div class="log-panel" id="logPanel"><span class="log-line info">// signed in. click SCAN INBOX to begin.</span></div>
     <div class="tab-bar" id="tabBar" style="display:none">
       <button class="tab active" onclick="showTab('delete')" id="tab-delete">DELETE <span class="tab-count" id="tc-delete">0</span></button>
       <button class="tab" onclick="showTab('keep')" id="tab-keep">KEEP <span class="tab-count" id="tc-keep">0</span></button>
+      <button class="tab" onclick="showTab('expense')" id="tab-expense">OCC EXP <span class="tab-count" id="tc-expense">0</span></button>
+      <button class="tab" onclick="showTab('personal')" id="tab-personal">PERSONAL <span class="tab-count" id="tc-personal">0</span></button>
       <button class="tab" onclick="showTab('purchase')" id="tab-purchase">PURCHASE <span class="tab-count" id="tc-purchase">0</span></button>
-      <button class="tab" onclick="showTab('expense')" id="tab-expense">EXPENSES <span class="tab-count" id="tc-expense">0</span></button>
       <button class="tab" onclick="showTab('ask')" id="tab-ask">REVIEW <span class="tab-count" id="tc-ask">0</span></button>
     </div>
-
     <div id="tableArea"></div>
   </div>
 </div>
 
 <script>
-// ── MSAL CONFIG ───────────────────────────────────────────────────────────────
-
-const msalConfig = {
-  auth: {
-    clientId: '4e9cd3e0-2c43-4a34-9638-ea3072453249',
-    authority: 'https://login.microsoftonline.com/a05cc711-9963-425e-9503-77c269b31fca',
-    redirectUri: 'https://buckeyeduck.github.io/occ-inbox-sorter',
-  },
-  cache: { cacheLocation: 'localStorage', storeAuthStateInCookie: false }
-};
-
-const loginRequest = {
-  scopes: ['Mail.Read', 'Mail.ReadWrite', 'Mail.Send', 'User.Read']
-};
-
-const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-let currentAccount = null;
-let accessToken = null;
-
-// ── RULES ─────────────────────────────────────────────────────────────────────
-
-const RULES = {
-  intuit_email: 'ohio_clean_cans_llc+expenses@assist.intuit.com',
-  occ_domains: ['ohiocleancans.com','gorilladesk.com','clicklaboratory.com',
-    'stripe.com','e.stripe.com','squareup.com','square.com','intuit.com'],
-  revenue_ops_senders: ['noreply@messaging.squareup.com','no-reply@squareup.com',
-    'notifications@stripe.com','noreply@gorilladesk.com'],
-  spam_domains: ['pressurecleaningleads.com','tariosysgroup.com','theseosmo.com',
-    'fusion360.agency','tozing-workfox.com','payrollceu.com','caldergr.com',
-    'eg.expedia.com','generational.deals','tigercapitalfunding.com',
-    'email.gasbuddy.com','gasbuddy.com','tello.com','news.akc.org','akc.org',
-    'sociusmarketing.com','farislee.com','sunbeltnetwork.com'],
-  marketing_domains: ['substack.com','alignable.com','linkedin.com','recurly.com',
-    'birdeye.org','rocketlawyer.com','cycloneshockey.com','em.weather.com',
-    'wayfair.com','members.wayfair.com','service.wayfair.com','bedbathandbeyond.com',
-    'flippnews.com','email.golf.com','golf.com','o.delta.com','tiktokshop.com',
-    'cancercrew.com','mail.cancercrew.com','is.email.nextdoor.com',
-    'sports.comms.yahoo.net','biaggi.com','mail.cursor.com'],
-  purchase_senders: ['zoro@e.zoro.com','noreply@t.vistaprint.com','pkginfo@ups.com'],
-  expense_senders_confirmed: ['donotreply@rumpke.com'],
-  expense_keywords: [/receipt/i,/invoice/i,/amount paid/i,/payment confirm/i,/billing statement/i],
-  spam_subjects: [/\bseo\b/i,/graphic.design/i,/product.entry.for/i,/let.s.connect/i,/exit.planning/i],
-  promo_keywords: [/\d+\s*%\s*off/i,/free.shipping/i,/\bsale\b/i,/coupon/i,/stock.up/i,/save.big/i,/spring.cyber/i,/price.drop/i,/exclusive.offer/i,/discount/i],
-};
-
-function getDomain(addr) { const m = (addr||'').match(/@(.+)$/); return m ? m[1].toLowerCase() : ''; }
-function domainMatches(d, rule) { return d === rule || d.endsWith('.' + rule); }
-function isPromo(s) { return RULES.promo_keywords.some(p => p.test(s)); }
-
-function categorize(msg) {
-  const from = (msg.from?.emailAddress?.address || '').toLowerCase();
-  const subj = msg.subject || '';
-  const domain = getDomain(from);
-
-  if (RULES.revenue_ops_senders.some(s => from === s))
-    return { cat: 'keep', label: 'OCC_OPS', badge: 'b-keep' };
-  if (RULES.occ_domains.some(d => domainMatches(domain, d)))
-    return { cat: 'keep', label: 'OCC', badge: 'b-keep' };
-
-  // fal.ai receipts come via stripe
-  if (from.includes('stripe.com') && /receipt/i.test(subj) && !isPromo(subj))
-    return { cat: 'expense', label: 'EXPENSE', badge: 'b-expense' };
-  if (RULES.expense_senders_confirmed.some(s => from === s) && !isPromo(subj))
-    return { cat: 'expense', label: 'EXPENSE', badge: 'b-expense' };
-
-  if (RULES.spam_domains.some(d => domainMatches(domain, d) || from === d))
-    return { cat: 'delete', label: 'SPAM', badge: 'b-delete' };
-  if (RULES.spam_subjects.some(p => p.test(subj)))
-    return { cat: 'delete', label: 'SPAM', badge: 'b-delete' };
-  if (RULES.marketing_domains.some(d => domainMatches(domain, d)))
-    return { cat: 'delete', label: 'PROMO', badge: 'b-delete' };
-
-  if (RULES.purchase_senders.some(s => from === s)) {
-    if (isPromo(subj)) return { cat: 'delete', label: 'PROMO', badge: 'b-delete' };
-    return { cat: 'purchase', label: 'PURCHASE', badge: 'b-purchase' };
-  }
-  if (!isPromo(subj) && RULES.expense_keywords.some(k => k.test(subj)))
-    return { cat: 'purchase', label: 'PURCHASE', badge: 'b-purchase' };
-
-  return { cat: 'ask', label: 'REVIEW', badge: 'b-ask' };
+const msalConfig={auth:{clientId:'4e9cd3e0-2c43-4a34-9638-ea3072453249',authority:'https://login.microsoftonline.com/a05cc711-9963-425e-9503-77c269b31fca',redirectUri:'https://buckeyeduck.github.io/occ-projects'},cache:{cacheLocation:'localStorage',storeAuthStateInCookie:false}};
+const loginRequest={scopes:['Mail.Read','Mail.ReadWrite','Mail.Send','User.Read']};
+const msalInstance=new msal.PublicClientApplication(msalConfig);
+let currentAccount=null,accessToken=null;
+const RULES={intuit_occ:'ohio_clean_cans_llc+expenses@assist.intuit.com',intuit_personal:'hacjac_capital_llc+expenses@assist.intuit.com',occ_domains:['ohiocleancans.com','gorilladesk.com','clicklaboratory.com','stripe.com','e.stripe.com','squareup.com','square.com','intuit.com'],revenue_ops:['noreply@messaging.squareup.com','no-reply@squareup.com','notifications@stripe.com','noreply@gorilladesk.com'],occ_expense_senders:['donotreply@rumpke.com'],personal_expense_domains:['pharmacy.amazon.com','eat.grubhub.com'],spam_domains:['pressurecleaningleads.com','tariosysgroup.com','theseosmo.com','fusion360.agency','tozing-workfox.com','payrollceu.com','caldergr.com','eg.expedia.com','generational.deals','tigercapitalfunding.com','email.gasbuddy.com','gasbuddy.com','tello.com','news.akc.org','akc.org','sociusmarketing.com','farislee.com','sunbeltnetwork.com'],marketing_domains:['substack.com','alignable.com','linkedin.com','recurly.com','birdeye.org','rocketlawyer.com','cycloneshockey.com','em.weather.com','wayfair.com','members.wayfair.com','service.wayfair.com','bedbathandbeyond.com','flippnews.com','email.golf.com','golf.com','o.delta.com','tiktokshop.com','cancercrew.com','mail.cancercrew.com','is.email.nextdoor.com','sports.comms.yahoo.net','biaggi.com','mail.cursor.com'],purchase_senders:['zoro@e.zoro.com','noreply@t.vistaprint.com','pkginfo@ups.com'],expense_kw:[/receipt/i,/invoice/i,/amount paid/i,/payment confirm/i,/billing statement/i,/order confirm/i],spam_subj:[/\bseo\b/i,/graphic.design/i,/product.entry.for/i,/let.s.connect/i,/exit.planning/i],promo_kw:[/\d+\s*%\s*off/i,/free.shipping/i,/\bsale\b/i,/coupon/i,/stock.up/i,/save.big/i,/spring.cyber/i,/price.drop/i,/exclusive.offer/i,/discount/i]};
+function getDomain(a){const m=(a||'').match(/@(.+)$/);return m?m[1].toLowerCase():'';}
+function dm(d,r){return d===r||d.endsWith('.'+r);}
+function isPromo(s){return RULES.promo_kw.some(p=>p.test(s));}
+function categorize(msg){
+  const from=(msg.from?.emailAddress?.address||'').toLowerCase(),subj=msg.subject||'',d=getDomain(from);
+  if(RULES.revenue_ops.some(s=>from===s)) return{cat:'keep',label:'OCC_OPS',badge:'b-keep'};
+  if(RULES.occ_domains.some(r=>dm(d,r))) return{cat:'keep',label:'OCC',badge:'b-keep'};
+  if(RULES.personal_expense_domains.some(r=>dm(d,r))&&!isPromo(subj)) return{cat:'personal',label:'PERSONAL',badge:'b-personal'};
+  if(RULES.occ_expense_senders.some(s=>from===s)&&!isPromo(subj)) return{cat:'expense',label:'OCC EXP',badge:'b-expense'};
+  if(dm(d,'stripe.com')&&/receipt/i.test(subj)&&!isPromo(subj)) return{cat:'expense',label:'OCC EXP',badge:'b-expense'};
+  if(RULES.spam_domains.some(r=>dm(d,r)||from===r)) return{cat:'delete',label:'SPAM',badge:'b-delete'};
+  if(RULES.spam_subj.some(p=>p.test(subj))) return{cat:'delete',label:'SPAM',badge:'b-delete'};
+  if(RULES.marketing_domains.some(r=>dm(d,r))) return{cat:'delete',label:'PROMO',badge:'b-delete'};
+  if(RULES.purchase_senders.some(s=>from===s)){if(isPromo(subj))return{cat:'delete',label:'PROMO',badge:'b-delete'};return{cat:'purchase',label:'PURCHASE',badge:'b-purchase'};}
+  if(!isPromo(subj)&&RULES.expense_kw.some(k=>k.test(subj))) return{cat:'purchase',label:'PURCHASE',badge:'b-purchase'};
+  return{cat:'ask',label:'REVIEW',badge:'b-ask'};
 }
-
-// ── AUTH ──────────────────────────────────────────────────────────────────────
-
-async function init() {
-  await msalInstance.initialize();
-  const response = await msalInstance.handleRedirectPromise();
-  if (response) currentAccount = response.account;
-  else {
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length) currentAccount = accounts[0];
-  }
-  if (currentAccount) showApp();
+async function init(){await msalInstance.initialize();const resp=await msalInstance.handleRedirectPromise();if(resp)currentAccount=resp.account;else{const a=msalInstance.getAllAccounts();if(a.length)currentAccount=a[0];}if(currentAccount)showApp();}
+async function signIn(){await msalInstance.loginRedirect(loginRequest);}
+function signOut(){msalInstance.logoutRedirect({account:currentAccount});}
+async function getToken(){const req={...loginRequest,account:currentAccount};try{const r=await msalInstance.acquireTokenSilent(req);return r.accessToken;}catch{await msalInstance.acquireTokenRedirect(req);}}
+function showApp(){document.getElementById('loginScreen').style.display='none';document.getElementById('appScreen').classList.add('visible');document.getElementById('userLabel').textContent=currentAccount.username;document.getElementById('statusDot').className='status-dot connected';document.getElementById('statusLabel').textContent='signed in';}
+function log(msg,type='info'){const p=document.getElementById('logPanel');const s=document.createElement('span');s.className=`log-line ${type}`;const ts=new Date().toLocaleTimeString('en-US',{hour12:false});s.textContent=`[${ts}] ${msg}`;p.appendChild(s);p.appendChild(document.createElement('br'));p.scrollTop=p.scrollHeight;}
+let categorized={delete:[],keep:[],expense:[],personal:[],purchase:[],ask:[]},currentTab='delete',selected=new Set();
+async function runScan(){
+  const btn=document.getElementById('scanBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>SCANNING...';
+  log('Acquiring token...','info');
+  try{
+    accessToken=await getToken();log('Token acquired. Fetching inbox...','ok');
+    let messages=[],url='https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=100&$select=id,subject,from,receivedDateTime,conversationId,isRead',pages=0;
+    while(url&&pages<5){const r=await fetch(url,{headers:{Authorization:`Bearer ${accessToken}`}});if(!r.ok)throw new Error(`Graph ${r.status}`);const data=await r.json();messages.push(...(data.value||[]));url=data['@odata.nextLink']||null;pages++;log(`Fetched ${messages.length}...`,'info');}
+    log(`Loaded ${messages.length}. Categorizing...`,'ok');
+    categorized={delete:[],keep:[],expense:[],personal:[],purchase:[],ask:[]};
+    for(const msg of messages){const r=categorize(msg);msg._cat=r;categorized[r.cat].push(msg);}
+    updateStats();showTab('delete');
+    document.getElementById('tabBar').style.display='flex';
+    document.getElementById('deleteBtn').disabled=false;
+    document.getElementById('forwardBtn').disabled=categorized.expense.length===0;
+    document.getElementById('forwardPersonalBtn').disabled=categorized.personal.length===0;
+    log(`Done. ${categorized.delete.length} delete | ${categorized.expense.length} OCC exp | ${categorized.personal.length} personal | ${categorized.ask.length} review.`,'ok');
+  }catch(e){log('ERROR: '+e.message,'err');document.getElementById('statusDot').className='status-dot error';}
+  btn.disabled=false;btn.textContent='▶ SCAN INBOX';
 }
-
-async function signIn() {
-  await msalInstance.loginRedirect(loginRequest);
+function updateStats(){
+  const map={delete:'statDelete',keep:'statKeep',expense:'statExpense',personal:'statPersonal',purchase:'statPurchase',ask:'statAsk'};
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.textContent=categorized[k].length;const tc=document.getElementById('tc-'+k);if(tc)tc.textContent=categorized[k].length;});
 }
-
-function signOut() {
-  msalInstance.logoutRedirect({ account: currentAccount });
+function showTab(tab){currentTab=tab;selected.clear();['delete','keep','expense','personal','purchase','ask'].forEach(t=>{document.getElementById('tab-'+t).classList.toggle('active',t===tab);});renderTable(categorized[tab]);}
+function renderTable(msgs){
+  const area=document.getElementById('tableArea');
+  if(!msgs.length){area.innerHTML='<div class="empty">// no messages in this category</div>';return;}
+  const sel=['delete','ask','expense','personal'].includes(currentTab);
+  let html='';
+  if(sel)html+=`<div class="action-bar"><label class="select-all-label"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> select all</label></div>`;
+  html+=`<table class="email-table"><thead><tr>${sel?'<th style="width:30px"></th>':''}<th>FROM</th><th>SUBJECT</th><th>CAT</th><th>DATE</th></tr></thead><tbody>`;
+  for(const msg of msgs){const from=msg.from?.emailAddress?.address||'',name=msg.from?.emailAddress?.name||from,subj=msg.subject||'(no subject)',date=msg.receivedDateTime?new Date(msg.receivedDateTime).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';html+=`<tr>${sel?`<td><input type="checkbox" class="cb" data-id="${msg.id}" onchange="toggleSelect('${msg.id}',this.checked)"></td>`:''}<td class="from-cell" title="${from}">${name}</td><td class="subj-cell" title="${subj}">${subj}</td><td><span class="badge ${msg._cat.badge}">${msg._cat.label}</span></td><td class="date-cell">${date}</td></tr>`;}
+  html+='</tbody></table>';area.innerHTML=html;
 }
-
-async function getToken() {
-  const req = { ...loginRequest, account: currentAccount };
-  try {
-    const r = await msalInstance.acquireTokenSilent(req);
-    return r.accessToken;
-  } catch {
-    const r = await msalInstance.acquireTokenRedirect(req);
-    return r?.accessToken;
-  }
+function toggleSelect(id,checked){if(checked)selected.add(id);else selected.delete(id);}
+function toggleSelectAll(cb){document.querySelectorAll('.cb[data-id]').forEach(b=>{b.checked=cb.checked;toggleSelect(b.dataset.id,cb.checked);});}
+async function deleteSelected(){
+  const ids=(currentTab==='delete'&&selected.size===0)?categorized.delete.map(m=>m.id):[...selected];
+  if(!ids.length){log('Nothing selected.','warn');return;}
+  const btn=document.getElementById('deleteBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>TRASHING...';
+  log(`Moving ${ids.length} to trash...`,'info');
+  let ok=0,fail=0;
+  for(const id of ids){try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/messages/${id}/move`,{method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},body:JSON.stringify({destinationId:'deleteditems'})});if(!r.ok)throw new Error(`${r.status}`);ok++;}catch(e){log(`Failed: ${e.message}`,'err');fail++;}}
+  log(`Trashed ${ok}.${fail?` ${fail} failed.`:''}`,'ok');
+  const idSet=new Set(ids);categorized.delete=categorized.delete.filter(m=>!idSet.has(m.id));categorized.ask=categorized.ask.filter(m=>!idSet.has(m.id));
+  selected.clear();updateStats();showTab(currentTab);btn.disabled=false;btn.textContent='⌫ TRASH SELECTED';
 }
-
-function showApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').classList.add('visible');
-  document.getElementById('userLabel').textContent = currentAccount.username;
-  document.getElementById('statusDot').className = 'status-dot connected';
-  document.getElementById('statusLabel').textContent = 'signed in';
+async function forwardExpenses(type){
+  const isP=type==='personal',msgs=isP?categorized.personal:categorized.expense,dest=isP?RULES.intuit_personal:RULES.intuit_occ,label=isP?'personal':'OCC',btnId=isP?'forwardPersonalBtn':'forwardBtn';
+  if(!msgs.length){log(`No ${label} expenses.`,'warn');return;}
+  const btn=document.getElementById(btnId);btn.disabled=true;btn.innerHTML='<span class="spinner"></span>FORWARDING...';
+  log(`Forwarding ${msgs.length} ${label} receipts...`,'info');
+  let ok=0;
+  for(const msg of msgs){try{const r=await fetch(`https://graph.microsoft.com/v1.0/me/messages/${msg.id}/forward`,{method:'POST',headers:{Authorization:`Bearer ${accessToken}`,'Content-Type':'application/json'},body:JSON.stringify({toRecipients:[{emailAddress:{address:dest}}],comment:`[FWD Receipt] ${label} — OCC Inbox Sorter`})});if(!r.ok)throw new Error(`${r.status}`);log(`Forwarded: ${msg.subject}`,'ok');ok++;}catch(e){log(`Failed: ${msg.subject} — ${e.message}`,'err');}}
+  log(`Forwarded ${ok} ${label} receipts.`,'ok');btn.disabled=false;btn.textContent=isP?'↗ FORWARD PERSONAL EXPENSES':'↗ FORWARD OCC EXPENSES';
 }
-
-// ── LOG ───────────────────────────────────────────────────────────────────────
-
-function log(msg, type = 'info') {
-  const p = document.getElementById('logPanel');
-  const s = document.createElement('span');
-  s.className = `log-line ${type}`;
-  const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
-  s.textContent = `[${ts}] ${msg}`;
-  p.appendChild(s);
-  p.appendChild(document.createElement('br'));
-  p.scrollTop = p.scrollHeight;
-}
-
-// ── STATE ─────────────────────────────────────────────────────────────────────
-
-let categorized = { delete: [], keep: [], purchase: [], expense: [], ask: [] };
-let currentTab = 'delete';
-let selected = new Set();
-
-// ── SCAN ──────────────────────────────────────────────────────────────────────
-
-async function runScan() {
-  const btn = document.getElementById('scanBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>SCANNING...';
-  log('Acquiring token...', 'info');
-
-  try {
-    accessToken = await getToken();
-    log('Token acquired. Fetching inbox...', 'ok');
-
-    let messages = [];
-    let url = 'https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=100&$select=id,subject,from,receivedDateTime,conversationId,isRead';
-    let pages = 0;
-
-    while (url && pages < 5) {
-      const r = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
-      if (!r.ok) throw new Error(`Graph error ${r.status}`);
-      const data = await r.json();
-      messages.push(...(data.value || []));
-      url = data['@odata.nextLink'] || null;
-      pages++;
-      log(`Fetched ${messages.length} messages...`, 'info');
-    }
-
-    log(`Loaded ${messages.length} messages. Categorizing...`, 'ok');
-
-    categorized = { delete: [], keep: [], purchase: [], expense: [], ask: [] };
-    for (const msg of messages) {
-      const result = categorize(msg);
-      msg._cat = result;
-      categorized[result.cat].push(msg);
-    }
-
-    updateStats();
-    showTab('delete');
-    document.getElementById('tabBar').style.display = 'flex';
-    document.getElementById('deleteBtn').disabled = false;
-    document.getElementById('forwardBtn').disabled = categorized.expense.length === 0;
-    log(`Done. ${categorized.delete.length} to delete, ${categorized.expense.length} expenses, ${categorized.ask.length} to review.`, 'ok');
-
-  } catch (e) {
-    log('ERROR: ' + e.message, 'err');
-    document.getElementById('statusDot').className = 'status-dot error';
-  }
-
-  btn.disabled = false;
-  btn.textContent = '▶ SCAN INBOX';
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-
-function updateStats() {
-  document.getElementById('statDelete').textContent = categorized.delete.length;
-  document.getElementById('statKeep').textContent = categorized.keep.length;
-  document.getElementById('statPurchase').textContent = categorized.purchase.length;
-  document.getElementById('statAsk').textContent = categorized.ask.length;
-  ['delete','keep','purchase','expense','ask'].forEach(t => {
-    document.getElementById('tc-' + t).textContent = categorized[t].length;
-  });
-}
-
-function showTab(tab) {
-  currentTab = tab;
-  selected.clear();
-  ['delete','keep','purchase','expense','ask'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-  });
-  renderTable(categorized[tab]);
-}
-
-function renderTable(msgs) {
-  const area = document.getElementById('tableArea');
-  if (!msgs.length) { area.innerHTML = '<div class="empty">// no messages in this category</div>'; return; }
-
-  const selectable = ['delete','ask','expense'].includes(currentTab);
-  let html = '';
-  if (selectable) {
-    html += `<div class="action-bar">
-      <label class="select-all-label"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> select all</label>
-    </div>`;
-  }
-
-  html += `<table class="email-table"><thead><tr>
-    ${selectable ? '<th style="width:30px"></th>' : ''}
-    <th>FROM</th><th>SUBJECT</th><th>CAT</th><th>DATE</th>
-  </tr></thead><tbody>`;
-
-  for (const msg of msgs) {
-    const from = msg.from?.emailAddress?.address || '';
-    const name = msg.from?.emailAddress?.name || from;
-    const subj = msg.subject || '(no subject)';
-    const date = msg.receivedDateTime ? new Date(msg.receivedDateTime).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
-    html += `<tr>
-      ${selectable ? `<td><input type="checkbox" class="cb" data-id="${msg.id}" onchange="toggleSelect('${msg.id}',this.checked)"></td>` : ''}
-      <td class="from-cell" title="${from}">${name}</td>
-      <td class="subj-cell" title="${subj}">${subj}</td>
-      <td><span class="badge ${msg._cat.badge}">${msg._cat.label}</span></td>
-      <td class="date-cell">${date}</td>
-    </tr>`;
-  }
-  html += '</tbody></table>';
-  area.innerHTML = html;
-}
-
-function toggleSelect(id, checked) { if (checked) selected.add(id); else selected.delete(id); }
-function toggleSelectAll(cb) {
-  document.querySelectorAll('.cb[data-id]').forEach(b => { b.checked = cb.checked; toggleSelect(b.dataset.id, cb.checked); });
-}
-
-// ── DELETE ────────────────────────────────────────────────────────────────────
-
-async function deleteSelected() {
-  const ids = (currentTab === 'delete' && selected.size === 0)
-    ? categorized.delete.map(m => m.id)
-    : [...selected];
-  if (!ids.length) { log('Nothing selected.', 'warn'); return; }
-
-  const btn = document.getElementById('deleteBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>TRASHING...';
-  log(`Moving ${ids.length} messages to trash...`, 'info');
-
-  let ok = 0, fail = 0;
-  for (const id of ids) {
-    try {
-      const r = await fetch(`https://graph.microsoft.com/v1.0/me/messages/${id}/move`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ destinationId: 'deleteditems' })
-      });
-      if (!r.ok) throw new Error(`${r.status}`);
-      ok++;
-    } catch (e) { log(`Failed: ${e.message}`, 'err'); fail++; }
-  }
-
-  log(`Trashed ${ok}.${fail ? ` ${fail} failed.` : ''}`, ok > 0 ? 'ok' : 'warn');
-  const idSet = new Set(ids);
-  categorized.delete = categorized.delete.filter(m => !idSet.has(m.id));
-  categorized.ask = categorized.ask.filter(m => !idSet.has(m.id));
-  selected.clear();
-  updateStats();
-  showTab(currentTab);
-  btn.disabled = false;
-  btn.textContent = '⌫ TRASH SELECTED';
-}
-
-// ── FORWARD EXPENSES ──────────────────────────────────────────────────────────
-
-async function forwardExpenses() {
-  if (!categorized.expense.length) { log('No expenses to forward.', 'warn'); return; }
-  const btn = document.getElementById('forwardBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>FORWARDING...';
-  log(`Forwarding ${categorized.expense.length} receipts to Intuit...`, 'info');
-
-  let ok = 0;
-  for (const msg of categorized.expense) {
-    try {
-      const r = await fetch(`https://graph.microsoft.com/v1.0/me/messages/${msg.id}/forward`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          toRecipients: [{ emailAddress: { address: RULES.intuit_email } }],
-          comment: '[FWD Receipt] Forwarded by OCC Inbox Sorter'
-        })
-      });
-      if (!r.ok) throw new Error(`${r.status}`);
-      log(`Forwarded: ${msg.subject}`, 'ok');
-      ok++;
-    } catch (e) { log(`Failed: ${msg.subject} — ${e.message}`, 'err'); }
-  }
-
-  log(`Forwarded ${ok} receipts.`, 'ok');
-  btn.disabled = false;
-  btn.textContent = '↗ FORWARD EXPENSES';
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
 init();
 </script>
 </body>
