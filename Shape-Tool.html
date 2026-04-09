@@ -2,553 +2,343 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shape & Symbol Toolkit</title>
+<title>Copy & Paste Shape Kit</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; overflow: hidden; height: 100vh; display: flex; }
-
-  /* Sidebar */
-  #sidebar {
-    width: 220px;
-    background: #16213e;
-    border-right: 2px solid #0f3460;
-    padding: 10px;
-    overflow-y: auto;
-    flex-shrink: 0;
-    user-select: none;
+  body {
+    font-family: Arial, sans-serif;
+    background: #1e1e2e;
+    color: #eee;
+    padding: 16px;
+    min-height: 100vh;
   }
-  #sidebar h2 { font-size: 14px; color: #e94560; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 1px; }
-  #sidebar h2:first-child { margin-top: 4px; }
+  h1 { font-size: 20px; margin-bottom: 4px; color: #f5c542; }
+  .subtitle { font-size: 13px; color: #aaa; margin-bottom: 16px; }
+  h2 {
+    font-size: 13px;
+    color: #f06;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 18px 0 8px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4px;
+  }
 
-  .palette {
+  .grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 4px;
+    gap: 8px;
   }
-  .palette-item {
-    width: 44px;
-    height: 44px;
+
+  .btn {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #0f3460;
-    border: 1px solid #1a1a5e;
-    border-radius: 6px;
-    cursor: grab;
-    font-size: 26px;
-    transition: background 0.15s, transform 0.1s;
-  }
-  .palette-item:hover { background: #1a4a8a; transform: scale(1.1); }
-  .palette-item svg { width: 30px; height: 30px; }
-
-  /* Canvas */
-  #canvas {
-    flex: 1;
+    width: 70px;
+    min-height: 70px;
+    background: #2a2a3e;
+    border: 1px solid #444;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    padding: 6px 4px;
     position: relative;
-    background: #fff;
-    background-image:
-      linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
-    overflow: hidden;
   }
+  .btn:hover { background: #3a3a5e; border-color: #888; transform: scale(1.05); }
+  .btn:active { background: #4a4a6e; transform: scale(0.97); }
+  .btn .icon { font-size: 28px; line-height: 1; }
+  .btn .lbl { font-size: 9px; color: #999; margin-top: 4px; text-align: center; word-break: break-word; }
+  .btn svg { width: 36px; height: 36px; }
 
-  .shape {
-    position: absolute;
-    cursor: grab;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-  }
-  .shape:hover { outline: 2px dashed #e94560; outline-offset: 2px; }
-  .shape.selected { outline: 2px solid #e94560; outline-offset: 2px; }
-  .shape.dragging { cursor: grabbing; opacity: 0.85; z-index: 9999; }
+  /* Wide buttons for layout items */
+  .btn.wide { width: 110px; }
+  .btn.wide svg { width: 80px; height: 30px; }
 
-  /* Resize handle */
-  .resize-handle {
+  /* Copied flash */
+  .btn.copied { background: #2e7d32 !important; border-color: #4caf50 !important; }
+  .btn.copied::after {
+    content: 'COPIED!';
     position: absolute;
-    bottom: -4px;
-    right: -4px;
-    width: 10px;
-    height: 10px;
-    background: #e94560;
-    border-radius: 2px;
-    cursor: nwse-resize;
-    display: none;
-  }
-  .shape.selected .resize-handle { display: block; }
-
-  /* Toolbar */
-  #toolbar {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 6px;
-    z-index: 100;
-  }
-  #toolbar button {
-    padding: 8px 14px;
-    background: #16213e;
-    color: #eee;
-    border: 1px solid #0f3460;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-  #toolbar button:hover { background: #e94560; }
-
-  /* Color picker bar */
-  #colorbar {
-    position: absolute;
-    bottom: 10px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 6px;
-    background: rgba(22,33,62,0.9);
-    padding: 8px 14px;
-    border-radius: 10px;
-    z-index: 100;
-  }
-  .color-swatch {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.1s;
-  }
-  .color-swatch:hover, .color-swatch.active { transform: scale(1.2); border-color: #fff; }
-
-  /* Text label input */
-  #text-input-overlay {
-    display: none;
-    position: absolute;
-    z-index: 10000;
-  }
-  #text-input-overlay input {
-    font-size: 18px;
-    padding: 4px 8px;
-    border: 2px solid #e94560;
+    transform: translate(-50%, -50%);
+    background: #4caf50;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 8px;
     border-radius: 4px;
-    outline: none;
-    min-width: 120px;
+    pointer-events: none;
+  }
+
+  /* Size picker */
+  .size-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 10px 0;
+    background: #2a2a3e;
+    padding: 8px 14px;
+    border-radius: 8px;
+    flex-wrap: wrap;
+  }
+  .size-bar label { font-size: 12px; color: #ccc; }
+  .size-bar input[type=range] { width: 120px; }
+  .size-bar .val { font-size: 12px; color: #f5c542; min-width: 40px; }
+  .size-bar select, .size-bar input[type=color] {
+    background: #1e1e2e;
+    color: #eee;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 12px;
   }
 </style>
 </head>
 <body>
 
-<div id="sidebar">
-  <h2>Shapes</h2>
-  <div class="palette" id="shapes-palette"></div>
+<h1>Copy & Paste Shape Kit</h1>
+<p class="subtitle">Click any button to copy its HTML to your clipboard. Then Ctrl+V into your HTML file.</p>
 
-  <h2>Arrows & Lines</h2>
-  <div class="palette" id="arrows-palette"></div>
+<div class="size-bar">
+  <label>Size:</label>
+  <input type="range" id="sizeSlider" min="10" max="200" value="40">
+  <span class="val" id="sizeVal">40px</span>
 
-  <h2>Icons</h2>
-  <div class="palette" id="icons-palette"></div>
+  <label>Color:</label>
+  <input type="color" id="colorPicker" value="#333333">
 
-  <h2>Dots & Bullets</h2>
-  <div class="palette" id="dots-palette"></div>
+  <label>BG:</label>
+  <select id="bgPicker">
+    <option value="transparent">None</option>
+    <option value="#ffffff">White</option>
+    <option value="#f0f0f0">Light Gray</option>
+    <option value="#333333">Dark</option>
+    <option value="#ff0000">Red</option>
+    <option value="#0066ff">Blue</option>
+    <option value="#00aa00">Green</option>
+    <option value="#ff9900">Orange</option>
+    <option value="#9900cc">Purple</option>
+  </select>
 
-  <h2>Brackets & Frames</h2>
-  <div class="palette" id="brackets-palette"></div>
-
-  <h2>Labels</h2>
-  <div class="palette" id="labels-palette"></div>
-
-  <h2>Layout</h2>
-  <div class="palette" id="layout-palette"></div>
+  <label>Position:</label>
+  <select id="posPicker">
+    <option value="inline">Inline (flows with text)</option>
+    <option value="absolute">Absolute (place anywhere)</option>
+  </select>
 </div>
 
-<div id="canvas">
-  <div id="toolbar">
-    <button onclick="clearCanvas()" title="Clear all">Clear All</button>
-    <button onclick="deleteSelected()" title="Delete selected">Delete</button>
-    <button onclick="duplicateSelected()" title="Duplicate selected">Duplicate</button>
-    <button onclick="addTextLabel()" title="Add text label">+ Text</button>
-  </div>
+<!-- SHAPES -->
+<h2>Shapes (filled)</h2>
+<div class="grid" id="shapes-filled"></div>
 
-  <div id="colorbar"></div>
-  <div id="text-input-overlay"><input type="text" id="text-input" placeholder="Type label..."></div>
-</div>
+<h2>Shapes (outline)</h2>
+<div class="grid" id="shapes-outline"></div>
+
+<h2>Arrows & Lines</h2>
+<div class="grid" id="arrows"></div>
+
+<h2>Icons & Symbols</h2>
+<div class="grid" id="icons"></div>
+
+<h2>Dots & Bullets</h2>
+<div class="grid" id="dots"></div>
+
+<h2>Numbers</h2>
+<div class="grid" id="numbers"></div>
+
+<h2>Brackets & Borders</h2>
+<div class="grid" id="brackets"></div>
+
+<h2>Layout Pieces</h2>
+<div class="grid" id="layout"></div>
+
+<h2>Common HTML Blocks</h2>
+<div class="grid" id="blocks"></div>
 
 <script>
-// --- DATA ---
-const shapesSVG = [
-  { name: 'Square', svg: `<svg viewBox="0 0 30 30"><rect x="2" y="2" width="26" height="26" fill="currentColor" rx="2"/></svg>` },
-  { name: 'Rect', svg: `<svg viewBox="0 0 40 24"><rect x="2" y="2" width="36" height="20" fill="currentColor" rx="2"/></svg>` },
-  { name: 'Circle', svg: `<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="currentColor"/></svg>` },
-  { name: 'Oval', svg: `<svg viewBox="0 0 40 24"><ellipse cx="20" cy="12" rx="18" ry="10" fill="currentColor"/></svg>` },
-  { name: 'Triangle', svg: `<svg viewBox="0 0 30 30"><polygon points="15,2 28,28 2,28" fill="currentColor"/></svg>` },
-  { name: 'Diamond', svg: `<svg viewBox="0 0 30 30"><polygon points="15,2 28,15 15,28 2,15" fill="currentColor"/></svg>` },
-  { name: 'Pentagon', svg: `<svg viewBox="0 0 30 30"><polygon points="15,2 28,11 23,27 7,27 2,11" fill="currentColor"/></svg>` },
-  { name: 'Hexagon', svg: `<svg viewBox="0 0 30 30"><polygon points="8,2 22,2 29,15 22,28 8,28 1,15" fill="currentColor"/></svg>` },
-  { name: 'Star', svg: `<svg viewBox="0 0 30 30"><polygon points="15,2 18,11 28,11 20,17 23,27 15,21 7,27 10,17 2,11 12,11" fill="currentColor"/></svg>` },
-  { name: 'Sq Outline', svg: `<svg viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" rx="2"/></svg>` },
-  { name: 'Circle Outline', svg: `<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="none" stroke="currentColor" stroke-width="2"/></svg>` },
-  { name: 'Rounded Rect', svg: `<svg viewBox="0 0 40 24"><rect x="2" y="2" width="36" height="20" fill="currentColor" rx="10"/></svg>` },
-];
+// --- Helpers ---
+function getSize() { return document.getElementById('sizeSlider').value; }
+function getColor() { return document.getElementById('colorPicker').value; }
+function getBg() { return document.getElementById('bgPicker').value; }
+function getPos() { return document.getElementById('posPicker').value; }
 
-const arrows = [
-  '→', '←', '↑', '↓', '↔', '↕', '↗', '↘', '↙', '↖',
-  '⟶', '⟵', '➜', '➤', '▶', '◀', '▲', '▼',
-  '⤴', '⤵', '↩', '↪', '⟳', '⟲',
-];
-
-const icons = [
-  '✓', '✗', '✕', '⚡', '⚙', '🔒', '🔓', '👤', '👥',
-  '📁', '📄', '💬', '🔔', '🔍', '⭐', '❤', '⚠', '❓',
-  '📊', '📈', '🖼', '🎯', '💡', '🏠',
-  '☰', '⋮', '⊕', '⊖', '⊗',
-];
-
-const dots = [
-  '●', '○', '◉', '◎', '◆', '◇', '■', '□',
-  '▪', '▫', '•', '◦', '⬤', '⬡', '⬢',
-  '①', '②', '③', '④', '⑤',
-];
-
-const brackets = [
-  '「', '」', '『', '』', '【', '】',
-  '〈', '〉', '《', '》', '⌜', '⌝', '⌞', '⌟',
-  '╔', '╗', '╚', '╝', '═', '║',
-];
-
-const labels = [
-  { text: 'Header', style: 'font-weight:bold;font-size:24px;color:#333' },
-  { text: 'Subheader', style: 'font-weight:bold;font-size:18px;color:#555' },
-  { text: 'Body Text', style: 'font-size:14px;color:#333' },
-  { text: 'Label', style: 'font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px' },
-  { text: 'Button', style: 'font-size:14px;color:#fff;background:#0f3460;padding:6px 16px;border-radius:6px' },
-  { text: 'Link', style: 'font-size:14px;color:#2196F3;text-decoration:underline' },
-];
-
-const layoutItems = [
-  { name: 'Horiz Line', svg: `<svg viewBox="0 0 120 4" width="120" height="4"><line x1="0" y1="2" x2="120" y2="2" stroke="currentColor" stroke-width="2"/></svg>` },
-  { name: 'Vert Line', svg: `<svg viewBox="0 0 4 120" width="4" height="120"><line x1="2" y1="0" x2="2" y2="120" stroke="currentColor" stroke-width="2"/></svg>` },
-  { name: 'Dashed H', svg: `<svg viewBox="0 0 120 4" width="120" height="4"><line x1="0" y1="2" x2="120" y2="2" stroke="currentColor" stroke-width="2" stroke-dasharray="8,4"/></svg>` },
-  { name: 'Box 200x150', svg: `<svg viewBox="0 0 200 150" width="200" height="150"><rect x="1" y="1" width="198" height="148" fill="none" stroke="currentColor" stroke-width="2" rx="4"/></svg>` },
-  { name: 'Box 300x50', svg: `<svg viewBox="0 0 300 50" width="300" height="50"><rect x="1" y="1" width="298" height="48" fill="none" stroke="currentColor" stroke-width="2" rx="4"/></svg>` },
-  { name: 'Card', svg: `<svg viewBox="0 0 200 120" width="200" height="120"><rect x="1" y="1" width="198" height="118" fill="rgba(0,0,0,0.03)" stroke="currentColor" stroke-width="1.5" rx="8"/><line x1="1" y1="36" x2="199" y2="36" stroke="currentColor" stroke-width="1"/></svg>` },
-];
-
-const colors = ['#333333','#e94560','#0f3460','#2196F3','#4CAF50','#FF9800','#9C27B0','#00BCD4','#795548','#607D8B','#FFFFFF','#F5F5F5'];
-let currentColor = '#333333';
-
-// --- BUILD SIDEBAR ---
-function buildPalette(id, items, type) {
-  const el = document.getElementById(id);
-  items.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = 'palette-item';
-    div.draggable = false;
-    if (type === 'svg') {
-      div.innerHTML = item.svg;
-      div.style.color = '#ccc';
-      div.title = item.name;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'svg', item));
-    } else if (type === 'char') {
-      div.textContent = item;
-      div.title = item;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'char', item));
-    } else if (type === 'label') {
-      div.textContent = 'Aa';
-      div.title = item.text;
-      div.style.fontSize = '16px';
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'label', item));
-    } else if (type === 'layout') {
-      div.innerHTML = item.svg;
-      div.style.color = '#aaa';
-      div.style.width = '92px';
-      div.title = item.name;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'layout', item));
-    }
-  });
-  // Append after building
-  items.forEach((item, i) => {
-    // Already appended via event listeners? No, let me fix:
-  });
-  // Rebuild properly
-  el.innerHTML = '';
-  items.forEach((item, i) => {
-    const div = document.createElement('div');
-    div.className = 'palette-item';
-    if (type === 'svg') {
-      div.innerHTML = item.svg;
-      div.style.color = '#ccc';
-      div.title = item.name;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'svg', item));
-    } else if (type === 'char') {
-      div.textContent = item;
-      div.title = item;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'char', item));
-    } else if (type === 'label') {
-      div.textContent = 'Aa';
-      div.title = item.text;
-      div.style.fontSize = '16px';
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'label', item));
-    } else if (type === 'layout') {
-      div.innerHTML = item.svg;
-      div.style.color = '#aaa';
-      div.style.width = '92px';
-      div.title = item.name;
-      div.addEventListener('mousedown', (e) => startDragNew(e, 'layout', item));
-    }
-    el.appendChild(div);
-  });
-}
-
-buildPalette('shapes-palette', shapesSVG, 'svg');
-buildPalette('arrows-palette', arrows, 'char');
-buildPalette('icons-palette', icons, 'char');
-buildPalette('dots-palette', dots, 'char');
-buildPalette('brackets-palette', brackets, 'char');
-buildPalette('labels-palette', labels, 'label');
-buildPalette('layout-palette', layoutItems, 'layout');
-
-// Color bar
-const colorbar = document.getElementById('colorbar');
-colors.forEach(c => {
-  const s = document.createElement('div');
-  s.className = 'color-swatch' + (c === currentColor ? ' active' : '');
-  s.style.background = c;
-  if (c === '#FFFFFF' || c === '#F5F5F5') s.style.border = '2px solid #999';
-  s.addEventListener('click', () => {
-    currentColor = c;
-    document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
-    s.classList.add('active');
-    if (selectedShape) {
-      selectedShape.style.color = c;
-      const svgs = selectedShape.querySelectorAll('svg');
-      svgs.forEach(sv => sv.style.color = c);
-    }
-  });
-  colorbar.appendChild(s);
+document.getElementById('sizeSlider').addEventListener('input', function() {
+  document.getElementById('sizeVal').textContent = this.value + 'px';
 });
 
-// --- CANVAS LOGIC ---
-const canvas = document.getElementById('canvas');
-let selectedShape = null;
-let shapeIdCounter = 0;
-
-function createShapeOnCanvas(type, data, x, y) {
-  const el = document.createElement('div');
-  el.className = 'shape';
-  el.id = 'shape-' + (shapeIdCounter++);
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-  el.style.color = currentColor;
-
-  if (type === 'svg' || type === 'layout') {
-    el.innerHTML = data.svg;
-    const svg = el.querySelector('svg');
-    svg.style.color = 'inherit';
-    svg.style.pointerEvents = 'none';
-    if (type === 'svg') {
-      el.style.width = '60px';
-      el.style.height = '60px';
-      svg.style.width = '100%';
-      svg.style.height = '100%';
-    }
-  } else if (type === 'char') {
-    el.textContent = data;
-    el.style.fontSize = '36px';
-    el.style.lineHeight = '1';
-  } else if (type === 'label') {
-    el.textContent = data.text;
-    el.style.cssText += data.style;
-    el.style.position = 'absolute';
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.style.cursor = 'grab';
-    el.style.whiteSpace = 'nowrap';
-  }
-
-  // Resize handle for SVG shapes
-  if (type === 'svg' || type === 'layout') {
-    const rh = document.createElement('div');
-    rh.className = 'resize-handle';
-    rh.addEventListener('mousedown', (e) => startResize(e, el));
-    el.appendChild(rh);
-  }
-
-  // Double-click to edit text
-  el.addEventListener('dblclick', () => {
-    if (type === 'label' || type === 'char') {
-      const input = prompt('Edit text:', el.textContent);
-      if (input !== null) el.textContent = input;
-    }
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 600);
   });
+}
 
-  el.addEventListener('mousedown', (e) => {
-    if (e.target.classList.contains('resize-handle')) return;
-    selectShape(el);
-    startDragExisting(e, el);
+function makeStyle() {
+  const s = getSize();
+  const c = getColor();
+  const bg = getBg();
+  const pos = getPos();
+  let style = `font-size:${s}px; color:${c};`;
+  if (bg !== 'transparent') style += ` background:${bg}; padding:4px; border-radius:4px;`;
+  if (pos === 'absolute') style += ` position:absolute; left:100px; top:100px;`;
+  else style += ` display:inline-block;`;
+  return style;
+}
+
+function makeSvgStyle(w, h) {
+  const c = getColor();
+  const bg = getBg();
+  const pos = getPos();
+  let style = `width:${w}px; height:${h}px; color:${c};`;
+  if (bg !== 'transparent') style += ` background:${bg}; padding:4px; border-radius:4px;`;
+  if (pos === 'absolute') style += ` position:absolute; left:100px; top:100px;`;
+  else style += ` display:inline-block;`;
+  return style;
+}
+
+// --- Build buttons ---
+function addCharBtn(containerId, char, label) {
+  const grid = document.getElementById(containerId);
+  const btn = document.createElement('div');
+  btn.className = 'btn';
+  btn.innerHTML = `<span class="icon">${char}</span><span class="lbl">${label}</span>`;
+  btn.addEventListener('click', () => {
+    const html = `<span style="${makeStyle()}">${char}</span>`;
+    copyToClipboard(html, btn);
   });
-
-  canvas.appendChild(el);
-  selectShape(el);
-  return el;
+  grid.appendChild(btn);
 }
 
-function selectShape(el) {
-  if (selectedShape) selectedShape.classList.remove('selected');
-  selectedShape = el;
-  if (el) el.classList.add('selected');
-}
-
-// --- DRAG NEW FROM PALETTE ---
-function startDragNew(e, type, data) {
-  e.preventDefault();
-  const canvasRect = canvas.getBoundingClientRect();
-  const ghost = document.createElement('div');
-  ghost.style.position = 'fixed';
-  ghost.style.pointerEvents = 'none';
-  ghost.style.zIndex = '99999';
-  ghost.style.opacity = '0.7';
-  ghost.style.fontSize = '36px';
-  if (type === 'svg' || type === 'layout') {
-    ghost.innerHTML = data.svg || data;
-    ghost.style.color = currentColor;
-  } else if (type === 'char') {
-    ghost.textContent = data;
-    ghost.style.color = currentColor;
-  } else if (type === 'label') {
-    ghost.textContent = data.text;
-    ghost.style.cssText = data.style + ';position:fixed;pointer-events:none;z-index:99999;opacity:0.7;';
-  }
-  ghost.style.left = e.clientX + 'px';
-  ghost.style.top = e.clientY + 'px';
-  document.body.appendChild(ghost);
-
-  function onMove(ev) {
-    ghost.style.left = ev.clientX + 'px';
-    ghost.style.top = ev.clientY + 'px';
-  }
-  function onUp(ev) {
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-    document.body.removeChild(ghost);
-    const rx = ev.clientX - canvasRect.left;
-    const ry = ev.clientY - canvasRect.top;
-    if (rx > 0 && ry > 0 && rx < canvasRect.width && ry < canvasRect.height) {
-      createShapeOnCanvas(type, data, rx - 20, ry - 20);
-    }
-  }
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
-}
-
-// --- DRAG EXISTING ON CANVAS ---
-function startDragExisting(e, el) {
-  e.preventDefault();
-  el.classList.add('dragging');
-  const startX = e.clientX - el.offsetLeft;
-  const startY = e.clientY - el.offsetTop;
-
-  function onMove(ev) {
-    el.style.left = (ev.clientX - startX) + 'px';
-    el.style.top = (ev.clientY - startY) + 'px';
-  }
-  function onUp() {
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-    el.classList.remove('dragging');
-  }
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
-}
-
-// --- RESIZE ---
-function startResize(e, el) {
-  e.preventDefault();
-  e.stopPropagation();
-  const startX = e.clientX;
-  const startY = e.clientY;
-  const startW = el.offsetWidth;
-  const startH = el.offsetHeight;
-
-  function onMove(ev) {
-    el.style.width = Math.max(20, startW + ev.clientX - startX) + 'px';
-    el.style.height = Math.max(20, startH + ev.clientY - startY) + 'px';
-  }
-  function onUp() {
-    document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('mouseup', onUp);
-  }
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('mouseup', onUp);
-}
-
-// --- TOOLBAR ---
-function clearCanvas() {
-  if (confirm('Clear all shapes?')) {
-    canvas.querySelectorAll('.shape').forEach(s => s.remove());
-    selectedShape = null;
-  }
-}
-
-function deleteSelected() {
-  if (selectedShape) {
-    selectedShape.remove();
-    selectedShape = null;
-  }
-}
-
-function duplicateSelected() {
-  if (!selectedShape) return;
-  const clone = selectedShape.cloneNode(true);
-  clone.id = 'shape-' + (shapeIdCounter++);
-  clone.style.left = (selectedShape.offsetLeft + 20) + 'px';
-  clone.style.top = (selectedShape.offsetTop + 20) + 'px';
-  clone.classList.remove('selected');
-
-  // Re-attach events
-  clone.addEventListener('mousedown', (e) => {
-    if (e.target.classList.contains('resize-handle')) return;
-    selectShape(clone);
-    startDragExisting(e, clone);
+function addSvgBtn(containerId, svgContent, viewBox, label, wide) {
+  const grid = document.getElementById(containerId);
+  const btn = document.createElement('div');
+  btn.className = 'btn' + (wide ? ' wide' : '');
+  btn.innerHTML = `<svg viewBox="${viewBox}" style="color:currentColor">${svgContent}</svg><span class="lbl">${label}</span>`;
+  btn.addEventListener('click', () => {
+    const s = getSize();
+    const ratio = viewBox.split(' ');
+    const vw = parseFloat(ratio[2]);
+    const vh = parseFloat(ratio[3]);
+    const w = s;
+    const h = Math.round(s * (vh / vw));
+    const html = `<svg viewBox="${viewBox}" style="${makeSvgStyle(w, h)}">${svgContent}</svg>`;
+    copyToClipboard(html, btn);
   });
-  clone.addEventListener('dblclick', () => {
-    const input = prompt('Edit text:', clone.textContent);
-    if (input !== null) clone.textContent = input;
+  grid.appendChild(btn);
+}
+
+function addBlockBtn(containerId, label, htmlTemplate) {
+  const grid = document.getElementById(containerId);
+  const btn = document.createElement('div');
+  btn.className = 'btn wide';
+  btn.innerHTML = `<span class="icon" style="font-size:16px">${label}</span>`;
+  btn.addEventListener('click', () => {
+    const c = getColor();
+    const bg = getBg();
+    const html = htmlTemplate.replace(/\{color\}/g, c).replace(/\{bg\}/g, bg === 'transparent' ? '#f0f0f0' : bg);
+    copyToClipboard(html, btn);
   });
-  const rh = clone.querySelector('.resize-handle');
-  if (rh) rh.addEventListener('mousedown', (e) => startResize(e, clone));
-
-  canvas.appendChild(clone);
-  selectShape(clone);
+  grid.appendChild(btn);
 }
 
-function addTextLabel() {
-  const text = prompt('Enter text:');
-  if (text) {
-    createShapeOnCanvas('label', { text, style: 'font-size:16px;color:' + currentColor }, 200, 200);
-  }
-}
+// ===== SHAPES FILLED =====
+addSvgBtn('shapes-filled', '<rect x="1" y="1" width="28" height="28" fill="currentColor" rx="2"/>', '0 0 30 30', 'Square');
+addSvgBtn('shapes-filled', '<rect x="1" y="1" width="38" height="22" fill="currentColor" rx="2"/>', '0 0 40 24', 'Rectangle');
+addSvgBtn('shapes-filled', '<circle cx="15" cy="15" r="14" fill="currentColor"/>', '0 0 30 30', 'Circle');
+addSvgBtn('shapes-filled', '<ellipse cx="20" cy="12" rx="19" ry="11" fill="currentColor"/>', '0 0 40 24', 'Oval');
+addSvgBtn('shapes-filled', '<polygon points="15,1 29,29 1,29" fill="currentColor"/>', '0 0 30 30', 'Triangle');
+addSvgBtn('shapes-filled', '<polygon points="15,1 29,15 15,29 1,15" fill="currentColor"/>', '0 0 30 30', 'Diamond');
+addSvgBtn('shapes-filled', '<polygon points="15,1 29,11 24,29 6,29 1,11" fill="currentColor"/>', '0 0 30 30', 'Pentagon');
+addSvgBtn('shapes-filled', '<polygon points="8,1 22,1 29,15 22,29 8,29 1,15" fill="currentColor"/>', '0 0 30 30', 'Hexagon');
+addSvgBtn('shapes-filled', '<polygon points="15,1 18,11 29,11 20,17 24,28 15,21 6,28 10,17 1,11 12,11" fill="currentColor"/>', '0 0 30 30', 'Star');
+addSvgBtn('shapes-filled', '<rect x="1" y="1" width="38" height="22" fill="currentColor" rx="11"/>', '0 0 40 24', 'Pill');
 
-// Deselect on canvas click
-canvas.addEventListener('mousedown', (e) => {
-  if (e.target === canvas) selectShape(null);
-});
+// ===== SHAPES OUTLINE =====
+addSvgBtn('shapes-outline', '<rect x="2" y="2" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" rx="2"/>', '0 0 30 30', 'Square');
+addSvgBtn('shapes-outline', '<rect x="2" y="2" width="36" height="20" fill="none" stroke="currentColor" stroke-width="2" rx="2"/>', '0 0 40 24', 'Rectangle');
+addSvgBtn('shapes-outline', '<circle cx="15" cy="15" r="13" fill="none" stroke="currentColor" stroke-width="2"/>', '0 0 30 30', 'Circle');
+addSvgBtn('shapes-outline', '<polygon points="15,2 28,28 2,28" fill="none" stroke="currentColor" stroke-width="2"/>', '0 0 30 30', 'Triangle');
+addSvgBtn('shapes-outline', '<polygon points="15,2 28,15 15,28 2,15" fill="none" stroke="currentColor" stroke-width="2"/>', '0 0 30 30', 'Diamond');
+addSvgBtn('shapes-outline', '<rect x="2" y="2" width="36" height="20" fill="none" stroke="currentColor" stroke-width="2" rx="10"/>', '0 0 40 24', 'Pill');
+addSvgBtn('shapes-outline', '<polygon points="15,1 18,11 29,11 20,17 24,28 15,21 6,28 10,17 1,11 12,11" fill="none" stroke="currentColor" stroke-width="1.5"/>', '0 0 30 30', 'Star');
 
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    if (selectedShape && document.activeElement.tagName !== 'INPUT') {
-      deleteSelected();
-    }
-  }
-  if (e.key === 'd' && (e.ctrlKey || e.metaKey)) {
-    e.preventDefault();
-    duplicateSelected();
-  }
-});
+// ===== ARROWS =====
+const arrowData = [
+  ['→','Right'],['←','Left'],['↑','Up'],['↓','Down'],
+  ['↔','Left-Right'],['↕','Up-Down'],['↗','Up-Right'],['↘','Down-Right'],
+  ['↙','Down-Left'],['↖','Up-Left'],['➜','Bold Right'],['➤','Pointer'],
+  ['▶','Play'],['◀','Back'],['▲','Up Tri'],['▼','Down Tri'],
+  ['⤴','Curve Up'],['⤵','Curve Down'],['↩','Return'],['↪','Forward'],
+  ['⟳','Rotate CW'],['⟲','Rotate CCW'],['⇒','Double Right'],['⇐','Double Left'],
+];
+arrowData.forEach(([ch, lbl]) => addCharBtn('arrows', ch, lbl));
+
+// ===== ICONS =====
+const iconData = [
+  ['✓','Check'],['✗','X Mark'],['✕','Close'],['⚡','Lightning'],
+  ['⚙','Gear'],['🔒','Lock'],['🔓','Unlock'],['👤','Person'],
+  ['👥','People'],['📁','Folder'],['📄','File'],['💬','Chat'],
+  ['🔔','Bell'],['🔍','Search'],['⭐','Star'],['❤','Heart'],
+  ['⚠','Warning'],['❓','Question'],['📊','Chart'],['📈','Growth'],
+  ['🎯','Target'],['💡','Idea'],['🏠','Home'],['✉','Mail'],
+  ['☰','Menu'],['⋮','More'],['⊕','Add'],['⊖','Remove'],
+  ['✏','Edit'],['🗑','Trash'],['⏱','Timer'],['🔗','Link'],
+];
+iconData.forEach(([ch, lbl]) => addCharBtn('icons', ch, lbl));
+
+// ===== DOTS =====
+const dotData = [
+  ['●','Filled'],['○','Empty'],['◉','Bull'],['◎','Target'],
+  ['◆','Diamond'],['◇','Diamond Empty'],['■','Square'],['□','Square Empty'],
+  ['▪','Sm Square'],['▫','Sm Sq Empty'],['•','Bullet'],['◦','Open Bullet'],
+  ['⬤','Big Circle'],['⬡','Hex Empty'],['⬢','Hex Fill'],
+];
+dotData.forEach(([ch, lbl]) => addCharBtn('dots', ch, lbl));
+
+// ===== NUMBERS =====
+const numData = [
+  ['①','1'],['②','2'],['③','3'],['④','4'],['⑤','5'],
+  ['⑥','6'],['⑦','7'],['⑧','8'],['⑨','9'],['⑩','10'],
+  ['❶','1 Fill'],['❷','2 Fill'],['❸','3 Fill'],['❹','4 Fill'],['❺','5 Fill'],
+];
+numData.forEach(([ch, lbl]) => addCharBtn('numbers', ch, lbl));
+
+// ===== BRACKETS =====
+const bracketData = [
+  ['「','Top-L'],['」','Top-R'],['『','Dbl Top-L'],['』','Dbl Top-R'],
+  ['【','Bracket L'],['】','Bracket R'],['〈','Angle L'],['〉','Angle R'],
+  ['⌜','Corner TL'],['⌝','Corner TR'],['⌞','Corner BL'],['⌟','Corner BR'],
+  ['╔','Box TL'],['╗','Box TR'],['╚','Box BL'],['╝','Box BR'],
+  ['═','Horiz Dbl'],['║','Vert Dbl'],['─','Horiz'],['│','Vert'],
+];
+bracketData.forEach(([ch, lbl]) => addCharBtn('brackets', ch, lbl));
+
+// ===== LAYOUT =====
+addBlockBtn('layout', '▬ Horiz Line', '<hr style="border:none; height:2px; background:{color}; width:200px; margin:8px 0;">');
+addBlockBtn('layout', '┃ Vert Line', '<div style="width:2px; height:100px; background:{color}; display:inline-block;"></div>');
+addBlockBtn('layout', '┅ Dashed Line', '<hr style="border:none; height:2px; background:transparent; border-top:2px dashed {color}; width:200px; margin:8px 0;">');
+addBlockBtn('layout', '▭ Empty Box', '<div style="width:200px; height:120px; border:2px solid {color}; border-radius:6px;"></div>');
+addBlockBtn('layout', '▭ Wide Box', '<div style="width:300px; height:50px; border:2px solid {color}; border-radius:6px;"></div>');
+addBlockBtn('layout', '▭ Card', '<div style="width:200px; height:120px; border:1px solid {color}; border-radius:8px; overflow:hidden;"><div style="height:30px; border-bottom:1px solid {color}; background:{bg};"></div></div>');
+addBlockBtn('layout', '⊡ Placeholder', '<div style="width:150px; height:100px; background:{bg}; border:2px dashed {color}; border-radius:6px; display:flex; align-items:center; justify-content:center; color:{color}; font-size:12px;">Placeholder</div>');
+addBlockBtn('layout', '☐ Checkbox', '<div style="display:inline-flex; align-items:center; gap:6px;"><span style="width:18px; height:18px; border:2px solid {color}; border-radius:3px; display:inline-block;"></span><span style="color:{color}; font-size:14px;">Label</span></div>');
+addBlockBtn('layout', '◉ Radio', '<div style="display:inline-flex; align-items:center; gap:6px;"><span style="width:18px; height:18px; border:2px solid {color}; border-radius:50%; display:inline-block;"></span><span style="color:{color}; font-size:14px;">Option</span></div>');
+addBlockBtn('layout', '▤ Input Field', '<div style="width:200px; height:36px; border:1px solid {color}; border-radius:4px; background:#fff; padding:6px 10px; color:#999; font-size:13px;">Type here...</div>');
+
+// ===== COMMON HTML BLOCKS =====
+addBlockBtn('blocks', 'H1 Header', '<h1 style="color:{color}; font-size:32px; margin:0;">Heading</h1>');
+addBlockBtn('blocks', 'H2 Subhead', '<h2 style="color:{color}; font-size:24px; margin:0;">Subheading</h2>');
+addBlockBtn('blocks', 'Paragraph', '<p style="color:{color}; font-size:14px; margin:0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>');
+addBlockBtn('blocks', 'Button', '<button style="background:{color}; color:#fff; border:none; padding:10px 24px; border-radius:6px; font-size:14px; cursor:pointer;">Button</button>');
+addBlockBtn('blocks', 'Outline Btn', '<button style="background:transparent; color:{color}; border:2px solid {color}; padding:10px 24px; border-radius:6px; font-size:14px; cursor:pointer;">Button</button>');
+addBlockBtn('blocks', 'Badge', '<span style="background:{color}; color:#fff; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:bold;">Badge</span>');
+addBlockBtn('blocks', 'Avatar Circle', '<div style="width:48px; height:48px; border-radius:50%; background:{bg}; border:2px solid {color}; display:inline-flex; align-items:center; justify-content:center; font-size:20px; color:{color};">👤</div>');
+addBlockBtn('blocks', 'Nav Bar', '<div style="display:flex; gap:20px; padding:10px 20px; background:{bg}; border-bottom:2px solid {color};"><span style="color:{color}; font-weight:bold;">Logo</span><span style="color:{color};">Home</span><span style="color:{color};">About</span><span style="color:{color};">Contact</span></div>');
+addBlockBtn('blocks', 'Image Box', '<div style="width:150px; height:100px; background:{bg}; border:1px solid {color}; border-radius:4px; display:flex; align-items:center; justify-content:center; color:{color}; font-size:24px;">🖼</div>');
+addBlockBtn('blocks', 'Spacer 20px', '<div style="height:20px;"></div>');
+addBlockBtn('blocks', 'Spacer 40px', '<div style="height:40px;"></div>');
 </script>
 </body>
 </html>
